@@ -31,6 +31,9 @@ time_interval_in_days <- 3
 first_day <- newest_model$start_date + 7
 last_day <- newest_model$end_date + 7
 
+
+message("Did you remember to update the data?\ncode/process_ochca_data.R")
+
 oc_data <- read_csv("data/oc_data.csv")
 
 dat <- read_csv("data/oc_data.csv") %>%
@@ -297,7 +300,12 @@ results_folder <- path("code", "results", str_c(head(dat$start_date, 1), "_", ta
 dir_create(results_folder)
 write_rds(multi_chain_stem_fit, path(results_folder, "original.rds"))
 
+
+# Cleanup -----------------------------------------------------------------
 file_delete(dir_ls()[str_starts(dir_ls(), "ODE_inference_status_")])
 
+# Forecasting -------------------------------------------------------------
 forecast_from_folder(results_folder)
 
+# Update CalCat
+source("code/update_data_for_calcat.R")
