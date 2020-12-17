@@ -47,12 +47,13 @@ site_yml <-c(site_yml_old[1:archive_menu_begin], archive_menu_new, site_yml_old[
 # Write new site yml
 write_lines(site_yml, path = "analysis/_site.yml")
 
-
 # Build Site --------------------------------------------------------------
-workflowr::wflow_build(republish = T)
-
+workflowr::wflow_build()
 
 # Replace Homepage --------------------------------------------------------
 file_copy(path = path("docs", tail(all_models, 1)$folder, ext = "html"),
           new_path = path("docs", "index", ext = "html"),
           overwrite = T)
+
+# View Site ---------------------------------------------------------------
+wflow_view()

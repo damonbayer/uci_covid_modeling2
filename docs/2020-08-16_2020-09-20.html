@@ -293,6 +293,9 @@ $(document).ready(function () {
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
+      <a href="2020-11-01_2020-12-06.html">Nov  1 - Dec  6</a>
+    </li>
+    <li>
       <a href="2020-10-25_2020-11-29.html">Oct 25 - Nov 29</a>
     </li>
     <li>
@@ -367,7 +370,7 @@ $(document).ready(function () {
 <strong>Last updated:</strong> 2020-12-16
 </p>
 <p>
-<strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 6 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 1
+<strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 5 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 2
 </p>
 <p>
 <strong>Knit directory:</strong> <code>uci_covid_modeling2/</code> <span class="glyphicon glyphicon-question-sign" aria-hidden="true" title="This is the local directory in which the code in this file was executed."> </span>
@@ -388,7 +391,7 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 </div>
 <div id="strongRMarkdownfilestronguncommittedchanges" class="panel-collapse collapse">
 <div class="panel-body">
-<p>The R Markdown is untracked by Git. To know which version of the R Markdown file created these results, you’ll want to first commit it to the Git repo. If you’re still working on the analysis, you can ignore this warning. When you’re finished, you can run <code>wflow_publish</code> to commit the R Markdown file and build the HTML.</p>
+<p>The R Markdown file has staged changes. To know which version of the R Markdown file created these results, you’ll want to first commit it to the Git repo. If you’re still working on the analysis, you can ignore this warning. When you’re finished, you can run <code>wflow_publish</code> to commit the R Markdown file and build the HTML.</p>
 </div>
 </div>
 </div>
@@ -431,12 +434,18 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongCachestrongnone"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Cache:</strong> none </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongCachestrongdetected"> <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> <strong>Cache:</strong> detected </a>
 </p>
 </div>
-<div id="strongCachestrongnone" class="panel-collapse collapse">
+<div id="strongCachestrongdetected" class="panel-collapse collapse">
 <div class="panel-body">
-<p>Nice! There were no cached chunks for this analysis, so you can be confident that you successfully produced the results during this run.</p>
+The following chunks had caches available:
+<ul>
+<li>
+model-inputs
+</li>
+</ul>
+<p>To ensure reproducibility of the results, delete the cache directory <code>2020-08-16_2020-09-20_cache</code> and re-run the analysis. To have workflowr automatically delete the cache directory prior to building the file, set <code>delete_cache = TRUE</code> when running <code>wflow_build()</code> or <code>wflow_publish()</code>.</p>
 </div>
 </div>
 </div>
@@ -455,16 +464,16 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrong40eab34"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> 40eab34 </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomdamonbayerucicovidmodeling2treedcffe20d2a3e74da7266cbdc71a107b8225b008ftargetblankdcffe20a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/damonbayer/uci_covid_modeling2/tree/dcffe20d2a3e74da7266cbdc71a107b8225b008f" target="_blank">dcffe20</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrong40eab34" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomdamonbayerucicovidmodeling2treedcffe20d2a3e74da7266cbdc71a107b8225b008ftargetblankdcffe20a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
 </p>
 <p>
-The results in this page were generated with repository version 40eab34. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+The results in this page were generated with repository version <a href="https://github.com/damonbayer/uci_covid_modeling2/tree/dcffe20d2a3e74da7266cbdc71a107b8225b008f" target="_blank">dcffe20</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
 </p>
 <p>
 Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -479,36 +488,43 @@ Ignored files:
     Ignored:    analysis/2020-05-03_2020-06-07_cache/
     Ignored:    analysis/2020-06-07_2020-07-12_cache/
     Ignored:    analysis/2020-07-12_2020-08-16_cache/
+    Ignored:    analysis/2020-08-16_2020-09-20_cache/
+    Ignored:    analysis/2020-09-20_2020-10-25_cache/
+    Ignored:    analysis/2020-10-25_2020-11-29_cache/
+    Ignored:    analysis/2020-11-01_2020-12-06_cache/
     Ignored:    code/.DS_Store
+    Ignored:    code/results/.DS_Store
     Ignored:    data/.DS_Store
     Ignored:    data/from_OCHCA/
 
-Untracked files:
-    Untracked:  analysis/2020-03-29_2020-05-03.Rmd
-    Untracked:  analysis/2020-05-03_2020-06-07.Rmd
-    Untracked:  analysis/2020-06-07_2020-07-12.Rmd
-    Untracked:  analysis/2020-07-12_2020-08-16.Rmd
-    Untracked:  analysis/2020-08-16_2020-09-20.Rmd
-    Untracked:  analysis/2020-09-20_2020-10-25.Rmd
-    Untracked:  analysis/2020-10-25_2020-11-29.Rmd
-    Untracked:  code/analysis_template.Rmd
-    Untracked:  code/check post_prior_post transition.R
-    Untracked:  code/check_all_fits.R
-    Untracked:  code/fit_first_model.R
-    Untracked:  code/forecast.R
-    Untracked:  code/helper_functions.R
-    Untracked:  code/process_ochca_data.R
-    Untracked:  code/results/
-    Untracked:  code/stemr_functions.R
-    Untracked:  code/update_site.R
-    Untracked:  data/oc_city_data.csv
-    Untracked:  data/oc_data.csv
-    Untracked:  data/oc_zips.csv
-
 Unstaged changes:
+    Modified:   analysis/2020-03-29_2020-05-03.Rmd
+    Modified:   analysis/2020-05-03_2020-06-07.Rmd
+    Modified:   analysis/2020-06-07_2020-07-12.Rmd
+    Modified:   analysis/2020-07-12_2020-08-16.Rmd
+    Modified:   analysis/2020-08-16_2020-09-20.Rmd
+    Modified:   analysis/2020-09-20_2020-10-25.Rmd
+    Modified:   analysis/2020-10-25_2020-11-29.Rmd
+    Modified:   analysis/2020-11-01_2020-12-06.Rmd
+    Modified:   code/analysis_template.Rmd
+    Modified:   code/update_site.R
+
+Staged changes:
+    Modified:   analysis/2020-03-29_2020-05-03.Rmd
+    Modified:   analysis/2020-05-03_2020-06-07.Rmd
+    Modified:   analysis/2020-06-07_2020-07-12.Rmd
+    Modified:   analysis/2020-07-12_2020-08-16.Rmd
+    Modified:   analysis/2020-08-16_2020-09-20.Rmd
+    Modified:   analysis/2020-09-20_2020-10-25.Rmd
+    Modified:   analysis/2020-10-25_2020-11-29.Rmd
+    New:        analysis/2020-11-01_2020-12-06.Rmd
     Modified:   analysis/_site.yml
-    Modified:   analysis/about.Rmd
-    Modified:   analysis/license.Rmd
+    Modified:   code/analysis_template.Rmd
+    New:        code/fit_new_model.R
+    Modified:   code/forecast.R
+    New:        code/results/2020-11-01_2020-12-06/forecast.rds
+    New:        code/results/2020-11-01_2020-12-06/original.rds
+    Modified:   code/update_site.R
 
 </code></pre>
 <p>
@@ -521,21 +537,118 @@ Note that any generated files, e.g. HTML, png, CSS, etc., are not included in t
 <hr>
 </div>
 <div id="versions" class="tab-pane fade">
+
 <p>
-There are no past versions. Publish this analysis with <code>wflow_publish()</code> to start tracking its development.
+These are the previous versions of the repository in which changes were made to the R Markdown (<code>analysis/2020-08-16_2020-09-20.Rmd</code>) and HTML (<code>docs/2020-08-16_2020-09-20.html</code>) files. If you’ve configured a remote Git repository (see <code>?wflow_git_remote</code>), click on the hyperlinks in the table below to view the files as they were in that past version.
 </p>
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+File
+</th>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+<th>
+Message
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/damonbayer/uci_covid_modeling2/blob/dcffe20d2a3e74da7266cbdc71a107b8225b008f/analysis/2020-08-16_2020-09-20.Rmd" target="_blank">dcffe20</a>
+</td>
+<td>
+Damon Bayer
+</td>
+<td>
+2020-12-16
+</td>
+<td>
+Initial Commit
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/damonbayer/uci_covid_modeling2/dcffe20d2a3e74da7266cbdc71a107b8225b008f/docs/2020-08-16_2020-09-20.html" target="_blank">dcffe20</a>
+</td>
+<td>
+Damon Bayer
+</td>
+<td>
+2020-12-16
+</td>
+<td>
+Initial Commit
+</td>
+</tr>
+</tbody>
+</table>
+</div>
 <hr>
 </div>
 </div>
 </div>
-<div id="orange-county-ca-covid-19-situation-report-october-5-2020" class="section level2">
-<h2>Orange County, CA COVID-19 Situation Report, October 5, 2020</h2>
+<div id="orange-county-ca-covid-19-situation-report-september-28-2020" class="section level2">
+<h2>Orange County, CA COVID-19 Situation Report, September 28, 2020</h2>
 <div id="report-period-aug-16---sep-20-we-dont-use-the-most-recent-data-due-to-reporting-delays" class="section level4">
 <h4>Report period: Aug 16 - Sep 20 (we don’t use the most recent data due to reporting delays)</h4>
 <p>The goal of this report is to inform interested parties about dynamics of SARS-CoV-2 spread in Orange County, CA and to predict epidemic trajectories. Methodological details are provided below and in the accompanying <a href="https://arxiv.org/abs/2009.02654">manuscript</a>. We are also contributing to <a href="https://www.stat.uci.edu/covid19/index.html">COVID Trends by UC Irvine</a> project that provides data visualizations of California County trends across time and space.</p>
 <p><img src="figure/2020-08-16_2020-09-20.Rmd/D_I_P%20plot-1.png" width="1536" style="display: block; margin: auto;" /></p>
-<p><img src="figure/2020-08-16_2020-09-20.Rmd/unnamed-chunk-1-1.png" width="1536" style="display: block; margin: auto;" /><img src="figure/2020-08-16_2020-09-20.Rmd/unnamed-chunk-1-2.png" width="1536" style="display: block; margin: auto;" /></p>
-<p><img src="figure/2020-08-16_2020-09-20.Rmd/unnamed-chunk-2-1.png" width="1536" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-no-spaces-D_I_P-plot-1">
+Past versions of “D_I_P plot-1.png”
+</button>
+</p>
+<div id="fig-no-spaces-D_I_P-plot-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/damonbayer/uci_covid_modeling2/blob/dcffe20d2a3e74da7266cbdc71a107b8225b008f/docs/figure/2020-08-16_2020-09-20.Rmd/D_I_P plot-1.png" target="_blank">dcffe20</a>
+</td>
+<td>
+Damon Bayer
+</td>
+<td>
+2020-12-16
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/2020-08-16_2020-09-20.Rmd/IFR%20R0%20Plot-1.png" width="1536" style="display: block; margin: auto;" /><img src="figure/2020-08-16_2020-09-20.Rmd/IFR%20R0%20Plot-2.png" width="1536" style="display: block; margin: auto;" /></p>
+<p><img src="figure/2020-08-16_2020-09-20.Rmd/Reff%20Plot-1.png" width="1536" style="display: block; margin: auto;" /></p>
 </div>
 </div>
 <div id="summary-statements-are-made-assuming-95-credibility-levels" class="section level2">
@@ -561,6 +674,43 @@ There are no past versions. Publish this analysis with <code>wflow_publish()</co
 <h3>Model structure</h3>
 <p>We assume that all individuals in Orange County, CA can be split into 6 compartments: S = susceptible individuals, E = infected, but not yet infectious individuals, <span class="math inline">\(\text{I}_\text{e}\)</span> = individuals at early stages of infection, <span class="math inline">\(\text{I}_\text{p}\)</span> = individuals at progressed stages of infection (assumed 20% less infectious than individuals at the early infection stage), R = recovered individuals, D = individuals who died due to COVID-19. Possible progressions of an individual through the above compartments are depicted in the diagram below.</p>
 <p><img src="assets/model_figure.svg" width="60%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-model_figure">
+Past versions of model_figure.svg
+</button>
+</p>
+<div id="fig-model_figure" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/damonbayer/uci_covid_modeling2/blob/dcffe20d2a3e74da7266cbdc71a107b8225b008f/docs/assets/model_figure.svg" target="_blank">dcffe20</a>
+</td>
+<td>
+Damon Bayer
+</td>
+<td>
+2020-12-16
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>Mathematically, we assume that dynamics of the proportions of individuals in each compartment follow a set of ordinary differential equations corresponding to the above diagram. These equations are controlled by the following parameters:</p>
 <ul>
 <li>Basic reproductive number (<span class="math inline">\(R_0\)</span>)</li>
@@ -604,14 +754,14 @@ loaded via a namespace (and not attached):
  [7] plyr_1.8.6           R6_2.4.1             cellranger_1.1.0    
 [10] backports_1.1.10     reprex_0.3.0         evaluate_0.14       
 [13] httr_1.4.2           pillar_1.4.6         rlang_0.4.7         
-[16] readxl_1.3.1         rstudioapi_0.11      blob_1.2.1          
-[19] rmarkdown_2.3        labeling_0.3         munsell_0.5.0       
-[22] broom_0.7.0          compiler_4.0.3       httpuv_1.5.4        
-[25] modelr_0.1.8         xfun_0.17            pkgconfig_2.0.3     
-[28] htmltools_0.5.0      tidyselect_1.1.0     codetools_0.2-16    
+[16] readxl_1.3.1         rstudioapi_0.11      whisker_0.4         
+[19] blob_1.2.1           rmarkdown_2.3        labeling_0.3        
+[22] munsell_0.5.0        broom_0.7.0          compiler_4.0.3      
+[25] httpuv_1.5.4         modelr_0.1.8         xfun_0.17           
+[28] pkgconfig_2.0.3      htmltools_0.5.0      tidyselect_1.1.0    
 [31] arrayhelpers_1.1-0   fansi_0.4.1          crayon_1.3.4        
 [34] dbplyr_1.4.4         withr_2.3.0          later_1.1.0.1       
-[37] ggdist_2.2.0         grid_4.0.3           distributional_0.2.0
+[37] distributional_0.2.0 ggdist_2.2.0         grid_4.0.3          
 [40] jsonlite_1.7.1       gtable_0.3.0         lifecycle_0.2.0     
 [43] DBI_1.1.0            git2r_0.27.1         magrittr_1.5        
 [46] cli_2.0.2            stringi_1.5.3        farver_2.0.3        

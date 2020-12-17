@@ -1,6 +1,3 @@
-source("code/stemr_functions.R")
-results_folder <- "code/results/2020-10-25_2020-11-29"
-
 forecast_from_folder <- function(results_folder) {
 
   # Setup
@@ -178,56 +175,3 @@ forecast_from_folder <- function(results_folder) {
 
   write_rds(forecast_obj, path = path(results_folder, "forecast", ext = "rds"))
 }
-
-map(dir_ls("code/results")[-1], forecast_from_folder)
-
-
-tmp <- sim_results_tbl %>%
-  select(starts_with("."), natural_paths) %>%
-  mutate(natural_paths = map(natural_paths, as_tibble)) %>%
-  unnest(natural_paths) %>%
-  select(-starts_with(".")) %>%
-  pivot_longer(-time) %>%
-  mutate(name = fct_inorder(name))
-
-ci_width <- c(0.5, 0.8, 0.95)
-
-inferred_deaths_at_t0 <- tmp %>%
-  group_by(time, name) %>%
-  median_qi(.width = ci_width) %>%
-  filter(name == "D", .width == 0.8, time == 0) %>%
-  pull(.lower)
-
-
-
-tmp %>%
-  group_by(time, name) %>%
-  median_qi(.width = ci_width) %>%
-  mutate(adjust = (name == "D") * (deaths_at_t0 - inferred_deaths_at_t0) - (name == "R") * (deaths_at_t0 - inferred_deaths_at_t0)) %>%
-  mutate(
-    value = value + adjust,
-    .lower = .lower + adjust,
-    .upper = .upper + adjust
-  ) %>%
-  left_join(dat %>%
-    add_row(tibble(
-      time = 0,
-      start_date = min(dat$start_date) - date_delta,
-      end_date = min(dat$end_date) - date_delta
-    ),
-    .before = 1
-    ) %>%
-    select(time, date = end_date)) %>%
-  ggplot(aes(date, value, ymin = .lower, ymax = .upper)) +
-  facet_wrap(. ~ name, scale = "free_y") +
-  geom_lineribbon() +
-  cowplot::theme_minimal_grid() +
-  scale_y_continuous(name = "Count", labels = comma) +
-  scale_fill_brewer() +
-  scale_x_date(name = "Date", breaks = "2 weeks", date_labels = "%b\n%e")
-
-
-
-dat %>%
-
-  select(dat, time, date = end_date)

@@ -47,7 +47,7 @@ prev_models <-
   mutate(multi_chain_stem_fit = map(path(path, "original", ext = "rds"), read_rds))
 ```
 
-## Orange County, CA COVID-19 Situation Report, `r format(last_day + 15, "%B %e, %Y")`
+## Orange County, CA COVID-19 Situation Report, `r format(last_day + 8, "%B %e, %Y")`
 #### Report period: `r format(first_day, "%b %d")` - `r format(last_day, "%b %d")` (we don't use the most recent data due to reporting delays)
 
 The goal of this report is to inform interested parties about dynamics of SARS-CoV-2 spread in Orange County, CA and to predict epidemic trajectories. 
@@ -107,7 +107,7 @@ ggplot(mapping = aes(date, value)) +
   )
 ```
 
-```{r}
+```{r IFR R0 Plot}
 ifr_R0_samples <-
   prev_models %>% 
   mutate(model_number = rev(row_number())) %>% 
@@ -166,9 +166,10 @@ ifr_R0_intervals %>%
   theme(legend.position = c(0.2, 0.8), legend.title = element_text(size = 15.5), legend.text = element_text(size = 15.5), legend.background = element_rect(fill = "transparent"))
 ```
 
-```{r}
+```{r Reff Plot}
 Reff_intervals <-
   prev_models %>% 
+  mutate(next_end_date = lead(end_date, default = ymd("9999-12-31"))) %>% 
   mutate(epi_curves = map(multi_chain_stem_fit, extract_epi_curves)) %>% 
   select(start_date, end_date, epi_curves) %>% 
   unnest(epi_curves) %>% 
@@ -181,9 +182,11 @@ Reff_intervals <-
   median_qi(.width = ci_width) %>%
   ungroup() %>% 
   left_join(prev_models %>% 
-  mutate(time_date_conversion = multi_chain_stem_fit %>% map("data") %>% map(~select(., time, date = end_date))) %>% 
-  select(contains("date")) %>% 
-  unnest(time_date_conversion)) %>% 
+              mutate(time_date_conversion = multi_chain_stem_fit %>% map("data") %>% map(~select(., time, date = end_date))) %>% 
+              mutate(next_start_date = lead(start_date, default = ymd("9999-12-31"))) %>%
+              select(contains("date")) %>% 
+              unnest(time_date_conversion)) %>% 
+  filter(date < next_start_date) %>% 
   select(date, Reff, starts_with(".")) %>% 
   drop_na()
 
