@@ -149,7 +149,7 @@ ifr_R0_intervals %>%
   filter(name == "ifr") %>% 
   ggplot(aes(date, value, ymin = .lower, ymax = .upper)) +
   geom_lineribbon(color = "steelblue4") +
-  ggtitle("Historical Estimates of Infection-to-Fatality Ratio (IFR)") +
+  ggtitle("Historical estimates of infection-to-fatality ratio (IFR)") +
   scale_fill_brewer(name = "Credibility level", labels = str_c(percent(rev(ci_width))), guide = guide_legend(title.position = "top", direction = "horizontal")) +
   scale_y_continuous(name = "IFR", label = percent) +
   scale_x_date(name = "Date", date_breaks = "1 month", date_labels = "%b") +
@@ -159,6 +159,7 @@ ifr_R0_intervals %>%
   filter(name == "R0") %>% 
   ggplot(aes(date, value, ymin = .lower, ymax = .upper)) +
   geom_lineribbon(color = "steelblue4") +
+  geom_hline(yintercept = 1, linetype = "dashed") +
   ggtitle(expression(paste('Historical estimates of the basic reproductive number (', R[0], ')'))) +
   scale_fill_brewer(name = "Credibility level", labels = str_c(percent(rev(ci_width))), guide = guide_legend(title.position = "top", direction = "horizontal")) +
   scale_y_continuous(name = expression(R[0])) +
