@@ -238,8 +238,22 @@ oc_zip_month_data <- neg_line_list %>%
   arrange(zip)
 
 
+# OC City Incid -----------------------------------------------------------
+oc_city_incid <-
+  metadata %>%
+  mutate(pop_incid = population * SeptIncid / 100) %>%
+  group_by(city) %>%
+  summarize(population = sum(population),
+            pop_incid = sum(pop_incid)) %>%
+  mutate(prop_pop = population / sum(population),
+         prop_incid = pop_incid / sum(pop_incid)) %>%
+  arrange(city) %>%
+  select(-pop_incid)
+
+
 # Write Data --------------------------------------------------------------
 write_csv(oc_data, "data/oc_data.csv")
-write_csv(oc_city_data, "~/Documents/uci_covid19_dashboard/data/oc_city_data.csv")
 write_csv(oc_city_data, "data/oc_city_data.csv")
+write_csv(oc_city_data, "~/Documents/uci_covid19_dashboard/data/oc_city_data.csv")
 write_csv(oc_zip_month_data, "~/Documents/uci_covid19_dashboard/data/oc_zip_month_data.csv")
+write_csv(oc_city_incid, "data/oc_city_incidence.csv")
