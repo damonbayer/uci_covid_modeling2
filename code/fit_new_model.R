@@ -23,7 +23,6 @@ prev_models <- tibble(path = dir_ls("code/results")) %>%
   mutate(across(ends_with("date"), ymd)) %>%
   arrange(end_date)
 
-
 newest_model <- tail(prev_models, 1)
 
 time_interval_in_days <- 3
@@ -73,7 +72,7 @@ target <- prior_model_epi_curves %>%
 # Average the compartment count and stick extras in S if rounding messes things up
 init_states <- c(S = popsize - sum(round(colMeans(target[,-1]))), round(colMeans(target[,-1])))
 # Find MLE for C
-C <- inflation_factor * optimize(f = function(C) sum(extraDistr::ddirmnom(x = target, size = popsize, alpha = init_states / C, log = T)), lower = 1, upper = 10000, maximum = T)$maximum
+C <- inflation_factor * optimize(f = function(C) sum(extraDistr::ddirmnom(x = target, size = popsize, alpha = init_states / C, log = T)), lower = 1, upper = 100000, maximum = T)$maximum
 
 # rdirmnom(n = 2000, size = popsize, alpha = init_states / C) %>%
 #   `colnames<-`(c("S", "E", "Ie", "Ip", "R", "D")) %>%
