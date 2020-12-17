@@ -138,12 +138,26 @@ ifr_R0_samples <-
 #   scale_y_continuous(name = expression(R[0])) +
 #   xlab("Model Fit Period")
 
-ifr_R0_intervals <-
+# ifr_R0_intervals <-
+#   ifr_R0_samples %>% 
+#   select(date = end_date, R0, ifr) %>% 
+#   pivot_longer(-date) %>% 
+#   group_by(date, name) %>% 
+#   median_qi(.width = ci_width)
+
+# Create piecewise constant
+ifr_R0_intervals <- 
   ifr_R0_samples %>% 
-  select(date = end_date, R0, ifr) %>% 
-  pivot_longer(-date) %>% 
-  group_by(date, name) %>% 
-  median_qi(.width = ci_width)
+  select(start_date, end_date, R0, ifr) %>% 
+  pivot_longer(-c(start_date, end_date)) %>% 
+  group_by(start_date, end_date, name) %>% 
+  median_qi(.width = ci_width) %>% 
+  group_by(.width, name) %>% 
+  mutate(end_date = lead(start_date, default = max(end_date)) - 1) %>% 
+  ungroup() %>% 
+  pivot_longer(ends_with("date"), names_to = "date_type", values_to = "date") %>% 
+  select(date, everything(), -date_type) %>% 
+  arrange(date)
 
 ifr_R0_intervals %>% 
   filter(name == "ifr") %>% 
