@@ -44,7 +44,8 @@ prev_models <-
   separate(folder, c("start_date", "end_date"), sep = "_") %>%
   mutate(across(ends_with("date"), ymd)) %>% 
   filter(end_date <= last_day) %>% 
-  mutate(multi_chain_stem_fit = map(path(path, "original", ext = "rds"), read_rds))
+  mutate(multi_chain_stem_fit = map(path(path, "original", ext = "rds"), read_rds),
+         forecast_obj = map(path(path, "forecast", ext = "rds"), read_rds))
 ```
 
 ## Orange County, CA COVID-19 Situation Report, `r format(last_day + 8, "%B %e, %Y")`
@@ -195,28 +196,30 @@ ifr_R0_intervals %>%
 ```
 
 ```{r Reff Plot}
-Reff_intervals <-
+Reff_intervals <- 
   prev_models %>% 
-  mutate(next_end_date = lead(end_date, default = ymd("9999-12-31"))) %>% 
-  mutate(epi_curves = map(multi_chain_stem_fit, extract_epi_curves)) %>% 
-  select(start_date, end_date, epi_curves) %>% 
-  unnest(epi_curves) %>% 
-  mutate(prop_S =  S / popsize) %>% 
-  select(ends_with("date"), starts_with("."), time, prop_S) %>% 
-  left_join(select(ifr_R0_samples, -ifr, -label)) %>% 
+  mutate(forecast_results = map(forecast_obj, "forecast_results")) %>% 
+  select(start_date, end_date, forecast_results) %>% 
+  unnest(forecast_results) %>% 
+  select(-paths, -datasets) %>% 
+  mutate(natural_paths = map(natural_paths, ~as_tibble(.[,1:2]))) %>% 
+  unnest(natural_paths) %>% 
+  mutate(prop_S = S / popsize) %>% 
+  select(-S) %>% 
+  left_join(select(ifr_R0_samples, start_date, end_date, starts_with("."), R0)) %>% 
   mutate(Reff = R0 * prop_S) %>% 
   select(ends_with("date"), time, Reff) %>% 
   group_by(start_date, end_date, time) %>% 
-  median_qi(.width = ci_width) %>%
+  median_qi(.width = ci_width) %>% 
   ungroup() %>% 
   left_join(prev_models %>% 
-              mutate(time_date_conversion = multi_chain_stem_fit %>% map("data") %>% map(~select(., time, date = end_date))) %>% 
+              mutate(time_date_conversion = forecast_obj %>% map("data") %>% map(~select(., time, date = end_date))) %>% 
               mutate(next_start_date = lead(start_date, default = ymd("9999-12-31"))) %>%
               select(contains("date")) %>% 
               unnest(time_date_conversion)) %>% 
+  drop_na() %>% 
   filter(date < next_start_date) %>% 
-  select(date, Reff, starts_with(".")) %>% 
-  drop_na()
+  select(date, Reff, starts_with("."))
 
 Reff_intervals %>% 
   drop_na() %>% 
