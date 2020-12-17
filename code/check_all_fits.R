@@ -7,7 +7,7 @@ library(lubridate)
 library(coda)
 source("code/stemr_functions.R")
 
-results_folder <- "code/results_5x"
+results_folder <- "code/results"
 
 tmp <- tibble(path = dir_ls(results_folder)) %>%
   mutate(folder = path_file(path)) %>%
@@ -49,7 +49,7 @@ tmp_epi_curves %>%
 # Prevalence --------------------------------------------------------------
 tmp_epi_curves %>%
   select(first_day, last_day, epi_curves) %>%
-  mutate(new_last_day = lead(first_day)) %>%
+  mutate(new_last_day = lead(first_day, default = max(last_day))) %>%
   unnest(epi_curves) %>%
   filter(date <= new_last_day) %>%
   mutate(prevalence = E + Ie + Ip) %>%

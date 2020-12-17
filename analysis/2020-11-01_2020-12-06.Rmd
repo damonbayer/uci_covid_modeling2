@@ -54,7 +54,7 @@ The goal of this report is to inform interested parties about dynamics of SARS-C
 Methodological details are provided below and in the accompanying [manuscript](https://arxiv.org/abs/2009.02654). We are also contributing to [COVID Trends by UC Irvine](https://www.stat.uci.edu/covid19/index.html) project that provides data visualizations of California County trends across time and space. 
 
 ```{r D_I_P plot}
-d_i_p_paths <- 
+i_p_paths <- 
   forecast_obj$forecast_results %>%
   select(starts_with("."), natural_paths) %>%
   mutate(natural_paths = map(natural_paths, as_tibble)) %>%
@@ -62,7 +62,7 @@ d_i_p_paths <-
   select(-starts_with(".")) %>% 
   mutate(incidence = popsize - S,
          prevalence = E + Ie + Ip) %>% 
-  select(time, D, incidence, prevalence) %>% 
+  select(time, incidence, prevalence) %>% 
   pivot_longer(-time) %>%
   group_by(time, name) %>%
   median_qi(.width = ci_width) %>% 
@@ -70,29 +70,40 @@ d_i_p_paths <-
   ungroup() %>% 
   select(date, everything(), -time)
 
+deaths_at_t0 <- sum(oc_data[oc_data$date <= first_day, "deaths"])
+
+d_paths <- forecast_obj$forecast_results %>% 
+  select(starts_with("."), datasets) %>% 
+  mutate(datasets = map(datasets, as_tibble)) %>% 
+  unnest(datasets) %>% 
+  group_by(.draw) %>% 
+  mutate(cumulative_deaths = cumsum(deaths) + deaths_at_t0) %>% 
+  select(time, cumulative_deaths) %>% 
+  group_by(time) %>% 
+  median_qi(.width = ci_width) %>% 
+  left_join(select(forecast_obj$data, time, date = end_date)) %>% 
+  select(-time) %>% 
+  pivot_longer(cumulative_deaths)
+
+d_i_p_paths <- bind_rows(i_p_paths, d_paths)
+
 d_i_p_data <- 
   oc_data %>% 
-  mutate(D = cumsum(deaths),
+  mutate(cumulative_deaths = cumsum(deaths),
          incidence = cumsum(cases)) %>% 
-  select(date, D, incidence) %>% 
-  filter(date %in% unique(d_i_p_paths$date)) %>% 
+  select(date, cumulative_deaths, incidence) %>% 
+  filter(date %in% unique(d_i_p_paths$date) & date <= last_day) %>% 
   pivot_longer(-date)
 
-D_adjustment <- filter(d_i_p_data, name == "D", date == min(date))$value - filter(d_i_p_paths, .width == 0.8, name == "D", date == min(date))$.lower
-
 ggplot(mapping = aes(date, value)) +
-  facet_wrap(. ~ name, scales = "free_y", strip.position = "left", labeller = labeller(name = c("D" = "Cumulative Deaths", "incidence" = "Cumulative Incidence", "prevalence" = "Prevalence"))) +
+  facet_wrap(. ~ name, scales = "free_y", strip.position = "left", labeller = labeller(name = c("cumulative_deaths" = "Cumulative Deaths", "incidence" = "Cumulative Incidence", "prevalence" = "Prevalence"))) +
   geom_lineribbon(
-    data = d_i_p_paths %>% 
-  mutate(value = value + (name == "D") * D_adjustment,
-         .lower = .lower + (name == "D") * D_adjustment,
-         .upper = .upper + (name == "D") * D_adjustment) %>% 
-    filter(name %in% c("prevalence", "incidence")),
+    data = d_i_p_paths,
     mapping = aes(ymin = .lower, ymax = .upper), size = 1.5,
     color = "steelblue4"
   ) +
   geom_col(
-    data = filter(d_i_p_data, name %in% c("prevalence", "incidence")),
+    data = d_i_p_data,
     fill = "black"
   ) +
   ggtitle(glue("Latent & observed trajectories, posterior median & {ci_width_string} credible intervals")) +
