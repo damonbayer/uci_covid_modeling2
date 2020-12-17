@@ -1,17 +1,38 @@
-name: "uci_covid_modeling2"
+name: "uci_covid_modeling"
 output_dir: ../docs
 navbar:
-  title: "uci_covid_modeling2"
+  title: "UC Irvine COVID Modeling"
   left:
-  - text: Home
+  - text: Latest Report
     href: index.html
+  - text: Archived Reports
+    menu:
+      - text: "Oct 25 - Nov 29"
+        href: 2020-10-25_2020-11-29.html
+      - text: "Sep 20 - Oct 25"
+        href: 2020-09-20_2020-10-25.html
+      - text: "Aug 16 - Sep 20"
+        href: 2020-08-16_2020-09-20.html
+      - text: "Jul 12 - Aug 16"
+        href: 2020-07-12_2020-08-16.html
+      - text: "Jun  7 - Jul 12"
+        href: 2020-06-07_2020-07-12.html
+      - text: "May  3 - Jun  7"
+        href: 2020-05-03_2020-06-07.html
+      - text: "Mar 29 - May  3"
+        href: 2020-03-29_2020-05-03.html
   - text: About
     href: about.html
   - text: License
     href: license.html
+  right:
+  - icon: fa-github
+    text: Source code
+    href: https://github.com/damonbayer/uci_covid_modeling2
 output:
   workflowr::wflow_html:
     toc: yes
     toc_float: yes
-    theme: cosmo
+    theme: flatly
     highlight: textmate
+    css: style.css

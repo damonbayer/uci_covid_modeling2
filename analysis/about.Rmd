@@ -7,4 +7,41 @@ editor_options:
   chunk_output_type: console
 ---
 
-Describe your project.
+## About
+
+This website provides reports on the dynamics and future trends of spread of SARS-CoV-2 in Orange County, CA. Please visit the [github](https://github.com/vnminin/uci_covid_modeling) for details on the code, and read the [manuscript](https://arxiv.org/abs/2009.02654) associated with this endeavor for further methodological details.
+
+<a href="https://www.stat.uci.edu" target="_blank"><img src = "assets/UCI14_2Line_ICS_Dept_Stats_blue.png" class="center"/></a>
+<a href="https://infectiousdiseaseinitiative.uci.edu" target="_blank"><img src = "assets/U
+CI19_Infectious_Disease_Science_Int_2L_blue.png"/ width="33%"></a>
+&nbsp;&nbsp;&nbsp;&nbsp;
+<a href="https://www.niaid.nih.gov" target="_blank"><img src = "assets/niaid_logo.png"/ width="30%"></a>
+&nbsp;&nbsp;&nbsp;&nbsp;
+<a href="https://www.ochealthinfo.com" target="_blank"><img src = "assets/ochca_logo.png"/ width="30%"></a>
+
+### Authors
+
+Damon Bayer, Isaac Goldstein, and Vladimir N. Minin<br>
+Department of Statistics, University of California, Irvine
+
+Jon Fintzi, Keith Lumbard, and Emily Ricotta<br>
+National Institute of Allergy and Infectious Diseases
+
+Richard Chhuon, Alissa Dratch, Matthew Zahn<br>
+Orange County Health Care Agency
+
+### Contact
+[Vladimir Minin](https://vnminin.github.io/)  
+
+## Methodology
+
+### Data
+We use data provided by [OCHCA](https://www.ochealthinfo.com). An aggregated version of our data is available in the [github](https://github.com/vnminin/uci_covid_modeling/tree/master/data). Crucially, we exclude repeat tests given to patients who test positive (which happens when patients are hospitalized). Our data may not correspond with publicly available data. 
+
+We also do not analyze data in real time. This is because case, test, and death counts are often updated retroactively, and we wish to give data collectors time to provide complete results. Typically, there will be at least a ten day gap between the present day and the final date analyzed in the most recent report. 
+
+### Statistical methodology
+Our analysis relies on a six compartment mechanistic model of the pandemic. We then use Bayesian inference to provide inference on key disease dynamics and make predictions on future observed cases and deaths. Further descriptions of the methodology are available in the [manuscript](https://arxiv.org/abs/2009.02654).
+
+### Software
+We used the [R](https://www.r-project.org/) software environment, [tidyverse](https://www.tidyverse.org/) and [workflowr](https://jdblischak.github.io/workflowr/) packages for this website. Our analysis was conducted in [Stan](https://mc-stan.org/) with the [rstan](https://mc-stan.org/users/interfaces/rstan) package. 
