@@ -103,9 +103,11 @@ ggplot(mapping = aes(date, value)) +
     color = "steelblue4"
   ) +
   geom_col(
-    data = d_i_p_data,
+    data = filter(d_i_p_data, name == "incidence"),
     fill = "black"
   ) +
+  geom_line(data = filter(d_i_p_data, name == "cumulative_deaths")) +
+  geom_point(data = filter(d_i_p_data, name == "cumulative_deaths")) +
   ggtitle(glue("Latent & observed trajectories, posterior median & {ci_width_string} credible intervals")) +
   scale_fill_brewer(name = "Credibility level", labels = str_c(percent(rev(ci_width))), guide = guide_legend(title.position = "top", direction = "horizontal")) +
   scale_y_continuous(name = NULL, labels = comma) +

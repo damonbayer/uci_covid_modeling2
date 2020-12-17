@@ -48,6 +48,7 @@ site_yml <-c(site_yml_old[1:archive_menu_begin], archive_menu_new, site_yml_old[
 write_lines(site_yml, path = "analysis/_site.yml")
 
 # Build Site --------------------------------------------------------------
+# workflowr::wflow_build(files = "analysis/2020-03-29_2020-05-03.Rmd")
 workflowr::wflow_build()
 
 # Replace Homepage --------------------------------------------------------
