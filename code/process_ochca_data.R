@@ -90,7 +90,7 @@ other_test_synonyms <- c("inconclusive",
 )
 
 
-metadata <- tibble(
+metadata_zip <- tibble(
   zip = c(
     90620L, 90621L, 90623L, 90630L, 90631L,
     90680L, 90720L, 90740L, 90742L, 92602L, 92603L, 92604L, 92606L,
@@ -128,6 +128,26 @@ metadata <- tibble(
                      col_types = cols(zip = col_integer(),
                                       population = col_integer()))) %>%
   mutate(zip = as.character(zip))
+
+metadata_city <- tibble(
+  city = c("Aliso Viejo", "Anaheim", "Brea", "Buena Park", "Corona Del Mar",
+           "Costa Mesa", "Cypress", "Dana Point", "Foothill Ranch", "Fountain Valley",
+           "Fullerton", "Garden Grove", "Huntington Beach", "Irvine", "La Habra",
+           "La Palma", "Ladera Ranch", "Laguna Beach", "Laguna Hills", "Laguna Niguel",
+           "Laguna Woods", "Lake Forest", "Los Alamitos", "Midway City",
+           "Mission Viejo", "Newport Beach", "Newport Coast", "Orange",
+           "Placentia", "Rancho Santa Margarita", "San Clemente", "San Juan Capistrano",
+           "Santa Ana", "Seal Beach", "Stanton", "Trabuco Canyon", "Tustin",
+           "Villa Park", "Westminster", "Yorba Linda"),
+  cases = c(3, 53, 2, 16, 0, 17, 2, 0, 0, 7, 11, 18, 17, 31, 7, 0, 2, 1,
+            4, 1, 3, 5, 2, 0, 5, 4, 0, 24, 3, 4, 4, 4, 59, 5, 3, 1, 15, 2,
+            10, 5),
+  tests = c(55, 333, 29, 75, 11, 126, 34, 18, 10, 71, 117, 162, 213, 296,
+            38, 9, 26, 12, 26, 51, 12, 61, 22, 3, 97, 55, 9, 192, 51, 45,
+            37, 45, 325, 22, 16, 25, 103, 11, 79, 52)) %>%
+  left_join(read_csv("data/oc_zips.csv") %>%
+              group_by(city) %>%
+              summarize(population = sum(population)))
 
 deaths_tbl <- read_csv(line_list_path,
                        col_types = cols(.default = col_skip(),
@@ -200,12 +220,12 @@ deaths_tbl_city <- deaths_tbl %>%
   select(zip, date = DtDeath) %>%
   count(date, zip, name = "deaths") %>%
   arrange(date) %>%
-  left_join(select(metadata, zip, city)) %>%
+  left_join(select(metadata_zip, zip, city)) %>%
   count(date, city, wt = deaths, name = "deaths") %>%
   drop_na()
 
 neg_line_list_filtered_city <- neg_line_list_filtered %>%
-  left_join(select(metadata, zip, city)) %>%
+  left_join(select(metadata_zip, zip, city)) %>%
   drop_na() %>%
   count(date, test_result, city) %>%
   pivot_wider(names_from = test_result, values_from = n) %>%
@@ -221,7 +241,7 @@ oc_city_data <- full_join(neg_line_list_filtered_city, deaths_tbl_city) %>%
 # Create OC Zip Month Data ------------------------------------------------
 oc_zip_month_data <- neg_line_list %>%
   mutate(zip = str_sub(zip, end = 5)) %>%
-  filter(zip %in% metadata$zip) %>%
+  filter(zip %in% metadata_zip$zip) %>%
   filter(date >= lubridate::ymd("2020-03-01")) %>%
   drop_na() %>%
   mutate(year = lubridate::year(date),
@@ -233,23 +253,19 @@ oc_zip_month_data <- neg_line_list %>%
   select(zip, year, month, cases, tests) %>%
   pivot_longer(-c(zip, year, month)) %>%
   pivot_wider(names_from = c(name, year, month), values_from = value) %>%
-  right_join(metadata) %>%
+  right_join(metadata_zip) %>%
   select(zip, city, population, SeptIncid, starts_with("tests"), starts_with("cases")) %>%
   arrange(zip)
 
 
 # OC City Incid -----------------------------------------------------------
 oc_city_incid <-
-  metadata %>%
-  mutate(pop_incid = population * SeptIncid / 100) %>%
-  group_by(city) %>%
-  summarize(population = sum(population),
-            pop_incid = sum(pop_incid)) %>%
+  metadata_city %>%
+  mutate(pop_incid = population * cases / tests) %>%
   mutate(prop_pop = population / sum(population),
          prop_incid = pop_incid / sum(pop_incid)) %>%
   arrange(city) %>%
   select(-pop_incid)
-
 
 # Write Data --------------------------------------------------------------
 write_csv(oc_data, "data/oc_data.csv")

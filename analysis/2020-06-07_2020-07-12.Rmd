@@ -246,9 +246,9 @@ prevalence_direction <- ifelse(filter(d_i_p_paths, name == "prevalence", date ==
 future_prevalence_lower_est <- filter(d_i_p_paths, name == "prevalence", date == max(date), .width == 0.95)$.lower
 future_prevalence_upper_est <- filter(d_i_p_paths, name == "prevalence", date == max(date), .width == 0.95)$.upper
 
-ifr_est <- ifr_R0_samples %>% filter(end_date == max(end_date)) %>% pull(ifr) %>% quantile(c(0.025, 0.975))
-R0_est <- ifr_R0_samples %>% filter(end_date == max(end_date)) %>% pull(R0) %>% quantile(c(0.025, 0.975))
-Reff_est <- Reff_intervals %>% drop_na() %>% filter(date == max(date), .width == 0.95) %>% select(".lower", ".upper") %>% pivot_longer(everything()) %>% deframe()
+ifr_est <- ifr_R0_samples %>% filter(end_date == last_day) %>% pull(ifr) %>% quantile(c(0.025, 0.975))
+R0_est <- ifr_R0_samples %>% filter(end_date == last_day) %>% pull(R0) %>% quantile(c(0.025, 0.975))
+Reff_est <- Reff_intervals %>% drop_na() %>% filter(date == last_day, .width == 0.95) %>% select(".lower", ".upper") %>% pivot_longer(everything()) %>% deframe()
 ```
 
 

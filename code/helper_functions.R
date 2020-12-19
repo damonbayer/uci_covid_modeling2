@@ -43,8 +43,8 @@ lump_oc_data <- function(oc_data,
 forecast_from_folder <- function(results_folder) {
 
   # Setup
-  first_day <- ymd(str_sub(results_folder, start = -21, end = -12))
-  last_day <- ymd(str_sub(results_folder, start = -10))
+  first_day <- ymd(str_sub(results_folder, start = 14, end = 23))
+  last_day <- ymd(str_sub(results_folder, start = 25, end = 34))
   last_forecast_day <- last_day + days(30)
 
   deaths_at_t0 <- read_csv("data/oc_data.csv") %>%

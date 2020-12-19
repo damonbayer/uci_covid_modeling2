@@ -35,7 +35,7 @@ message("Did you remember to update the data?\ncode/process_ochca_data.R")
 
 oc_data <- read_csv("data/oc_data.csv")
 
-dat <- read_csv("data/oc_data.csv") %>%
+dat <- oc_data %>%
   lump_oc_data(time_interval_in_days,
                first_day,
                last_day)
