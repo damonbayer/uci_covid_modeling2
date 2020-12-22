@@ -9,6 +9,7 @@ editor_options:
 ---
 ```{r setup, include=FALSE}
 results_folder <- "code/results/2020-09-20_2020-10-25"
+city_name <- NA
 
 knitr::opts_chunk$set(echo = F, fig.align = "center", fig.width=16,  message=F)
 
@@ -25,8 +26,12 @@ library(coda)
 theme_set(theme_bw(base_size = 22)) 
 source("code/stemr_functions.R")
 
-first_day <- ymd(str_sub(results_folder, start = -21, end = -12))
-last_day <- ymd(str_sub(results_folder, start = -10))
+last_folder_name <- path_file(results_folder) #this will just get set to the yyyy-mm-dd_yyyy-mm-dd if there is no city
+folder_regex <- "[:digit:]{4}-[:digit:]{2}-[:digit:]{2}_[:digit:]{4}-[:digit:]{2}-[:digit:]{2}"
+
+
+first_day <- ymd(str_sub(results_folder, start = 14, end = 23))
+last_day <- ymd(str_sub(results_folder, start = 25, end = 34))
 
 multi_chain_stem_fit <- read_rds(path(results_folder, "original", ext = "rds"))
 popsize <- multi_chain_stem_fit$stem_fit_list[[1]]$dynamics$popsize
@@ -34,13 +39,23 @@ forecast_obj <- read_rds(path(results_folder, "forecast", ext = "rds"))
 
 last_forecast_day <- tail(forecast_obj$data$end_date, 1)
 
-oc_data <- read_csv("data/oc_data.csv")
+oc_data <-
+  if (is.na(city_name)) {
+    read_csv("data/oc_data.csv")
+  } else {
+      read_csv("data/oc_city_data.csv") %>%
+      filter(city == city_name) %>%
+      select(-city)
+  }
+
 ci_width <- c(0.5, 0.8, 0.95)
 ci_width_string <- str_c(percent(ci_width), collapse = ", ")
 
 prev_models <-
-  tibble(path = dir_ls("code/results")) %>%
-  mutate(folder = path_file(path)) %>%
+  tibble(path = dir_ls("code/results", recurse = T)) %>% 
+  mutate(last_path = path_file(path)) %>% 
+  {if (is.na(city_name)) filter(., str_detect(last_path, folder_regex)) else filter(., last_path == last_folder_name)} %>% 
+  mutate(folder = str_extract(path, pattern = "[:digit:]{4}-[:digit:]{2}-[:digit:]{2}_[:digit:]{4}-[:digit:]{2}-[:digit:]{2}")) %>%
   separate(folder, c("start_date", "end_date"), sep = "_") %>%
   mutate(across(ends_with("date"), ymd)) %>% 
   filter(end_date <= last_day) %>% 
@@ -246,9 +261,9 @@ prevalence_direction <- ifelse(filter(d_i_p_paths, name == "prevalence", date ==
 future_prevalence_lower_est <- filter(d_i_p_paths, name == "prevalence", date == max(date), .width == 0.95)$.lower
 future_prevalence_upper_est <- filter(d_i_p_paths, name == "prevalence", date == max(date), .width == 0.95)$.upper
 
-ifr_est <- ifr_R0_samples %>% filter(end_date == last_day) %>% pull(ifr) %>% quantile(c(0.025, 0.975))
-R0_est <- ifr_R0_samples %>% filter(end_date == last_day) %>% pull(R0) %>% quantile(c(0.025, 0.975))
-Reff_est <- Reff_intervals %>% drop_na() %>% filter(date == last_day, .width == 0.95) %>% select(".lower", ".upper") %>% pivot_longer(everything()) %>% deframe()
+ifr_est <- ifr_R0_samples %>% filter(end_date == max(end_date)) %>% pull(ifr) %>% quantile(c(0.025, 0.975))
+R0_est <- ifr_R0_samples %>% filter(end_date == max(end_date)) %>% pull(R0) %>% quantile(c(0.025, 0.975))
+Reff_est <- Reff_intervals %>% drop_na() %>% filter(date == max(date), .width == 0.95) %>% select(".lower", ".upper") %>% pivot_longer(everything()) %>% deframe()
 ```
 
 

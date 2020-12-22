@@ -7,11 +7,11 @@ library(foreach)
 library(doRNG)
 library(doParallel)
 registerDoParallel(cores = future::availableCores())
-
+#
 source('code/helper_functions.R')
 source("code/stemr_functions.R")
 source('code/forecast.R')
-
+source('code/fit_city_from_folder.R')
 inflation_factor <- 5
 
 popsize <- 3175692L
@@ -308,3 +308,19 @@ forecast_from_folder(results_folder)
 
 # Update CalCat
 source("code/update_data_for_calcat.R")
+
+# county_results_folder <- "code/results/2020-11-01_2020-12-06"
+# City models
+# These also perform forecasts
+county_results_folder <- results_folder
+rm(list = ls()[ls() != "county_results_folder"])
+
+city_name <- "Santa Ana"
+source("code/fit_city_from_folder.R")
+city_name <- "Anaheim"
+source("code/fit_city_from_folder.R")
+city_name <- "Irvine"
+source("code/fit_city_from_folder.R")
+
+# Cleanup -----------------------------------------------------------------
+file_delete(dir_ls()[str_starts(dir_ls(), "ODE_inference_status_")])
