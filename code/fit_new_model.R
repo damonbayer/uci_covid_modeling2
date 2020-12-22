@@ -7,11 +7,10 @@ library(foreach)
 library(doRNG)
 library(doParallel)
 registerDoParallel(cores = future::availableCores())
-#
+
 source('code/helper_functions.R')
 source("code/stemr_functions.R")
 source('code/forecast.R')
-source('code/fit_city_from_folder.R')
 inflation_factor <- 5
 
 popsize <- 3175692L
