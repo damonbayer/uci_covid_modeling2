@@ -195,7 +195,7 @@ ifr_R0_intervals %>%
   ggtitle("Historical estimates of infection-to-fatality ratio (IFR)") +
   scale_fill_brewer(name = "Credibility level", labels = str_c(percent(rev(ci_width))), guide = guide_legend(title.position = "top", direction = "horizontal")) +
   scale_y_continuous(name = "IFR", label = percent) +
-  scale_x_date(name = "Date", date_breaks = "1 month", date_labels = "%b") +
+  scale_x_date(name = "Date", date_breaks = "1 month", date_labels = "%b", limits = as_date(c(NA, last_forecast_day))) +
   theme(legend.position = c(0.8, 0.8), legend.title = element_text(size = 15.5), legend.text = element_text(size = 15.5), legend.background = element_rect(fill = "transparent"))
 
 ifr_R0_intervals %>% 
@@ -206,7 +206,7 @@ ifr_R0_intervals %>%
   ggtitle(expression(paste('Historical estimates of the basic reproductive number (', R[0], ')'))) +
   scale_fill_brewer(name = "Credibility level", labels = str_c(percent(rev(ci_width))), guide = guide_legend(title.position = "top", direction = "horizontal")) +
   scale_y_continuous(name = expression(R[0])) +
-  scale_x_date(name = "Date", date_breaks = "1 month", date_labels = "%b") +
+  scale_x_date(name = "Date", date_breaks = "1 month", date_labels = "%b", limits = as_date(c(NA, last_forecast_day))) +
   theme(legend.position = c(0.2, 0.8), legend.title = element_text(size = 15.5), legend.text = element_text(size = 15.5), legend.background = element_rect(fill = "transparent"))
 ```
 
