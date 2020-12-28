@@ -7,6 +7,8 @@ navbar:
     href: index.html
   - text: Archived Reports
     menu:
+      - text: "Nov 15 - Dec 20"
+        href: 2020-11-15_2020-12-20.html
       - text: "Nov  8 - Dec 13"
         href: 2020-11-08_2020-12-13.html
       - text: "Nov  1 - Dec  6"

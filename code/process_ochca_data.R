@@ -2,8 +2,8 @@ library(tidyverse)
 library(lubridate)
 library(here)
 
-line_list_path = "data/from_OCHCA/12.21.20 release to UCI team.csv"
-negative_line_list_path <- "data/from_OCHCA/All ELR PCR tests updated 12.21.20.csv"
+line_list_path = "data/from_OCHCA/12.28.20 release to UCI team.csv"
+negative_line_list_path <- "data/from_OCHCA/All ELR PCR tests updated 12.28.20.csv"
 
 negative_test_synonyms <- c("not detected",
                             "negative",

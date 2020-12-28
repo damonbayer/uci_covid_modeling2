@@ -293,6 +293,9 @@ $(document).ready(function () {
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
+      <a href="2020-11-15_2020-12-20.html">Nov 15 - Dec 20</a>
+    </li>
+    <li>
       <a href="2020-11-08_2020-12-13.html">Nov  8 - Dec 13</a>
     </li>
     <li>
@@ -373,7 +376,7 @@ $(document).ready(function () {
 <strong>Last updated:</strong> 2020-12-28
 </p>
 <p>
-<strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 5 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 2
+<strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 6 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 1
 </p>
 <p>
 <strong>Knit directory:</strong> <code>uci_covid_modeling2/</code> <span class="glyphicon glyphicon-question-sign" aria-hidden="true" title="This is the local directory in which the code in this file was executed."> </span>
@@ -389,12 +392,12 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguncommittedchanges"> <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> <strong>R Markdown file:</strong> uncommitted changes </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguptodate"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>R Markdown file:</strong> up-to-date </a>
 </p>
 </div>
-<div id="strongRMarkdownfilestronguncommittedchanges" class="panel-collapse collapse">
+<div id="strongRMarkdownfilestronguptodate" class="panel-collapse collapse">
 <div class="panel-body">
-<p>The R Markdown file has unstaged changes. To know which version of the R Markdown file created these results, you’ll want to first commit it to the Git repo. If you’re still working on the analysis, you can ignore this warning. When you’re finished, you can run <code>wflow_publish</code> to commit the R Markdown file and build the HTML.</p>
+<p>Great! Since the R Markdown file has been committed to the Git repository, you know the exact version of the code that produced these results.</p>
 </div>
 </div>
 </div>
@@ -467,16 +470,16 @@ model-inputs
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomdamonbayerucicovidmodeling2tree9ac3902fe68c8cc06fc607085f23cf20100587e8targetblank9ac3902a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/damonbayer/uci_covid_modeling2/tree/9ac3902fe68c8cc06fc607085f23cf20100587e8" target="_blank">9ac3902</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomdamonbayerucicovidmodeling2tree9115bccf33aaaa7babaaf2dc2d60c7d5ab3d44fetargetblank9115bcca"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/damonbayer/uci_covid_modeling2/tree/9115bccf33aaaa7babaaf2dc2d60c7d5ab3d44fe" target="_blank">9115bcc</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomdamonbayerucicovidmodeling2tree9ac3902fe68c8cc06fc607085f23cf20100587e8targetblank9ac3902a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomdamonbayerucicovidmodeling2tree9115bccf33aaaa7babaaf2dc2d60c7d5ab3d44fetargetblank9115bcca" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
 </p>
 <p>
-The results in this page were generated with repository version <a href="https://github.com/damonbayer/uci_covid_modeling2/tree/9ac3902fe68c8cc06fc607085f23cf20100587e8" target="_blank">9ac3902</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+The results in this page were generated with repository version <a href="https://github.com/damonbayer/uci_covid_modeling2/tree/9115bccf33aaaa7babaaf2dc2d60c7d5ab3d44fe" target="_blank">9115bcc</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
 </p>
 <p>
 Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -502,6 +505,7 @@ Ignored files:
     Ignored:    analysis/2020-11-08_2020-12-13_cache/
     Ignored:    analysis/2020-11-08_2020-12-13_irvine_cache/
     Ignored:    analysis/2020-11-08_2020-12-13_santa-ana_cache/
+    Ignored:    analysis/2020-11-15_2020-12-20_cache/
     Ignored:    analysis/analysis_template_city_cache/
     Ignored:    code/.DS_Store
     Ignored:    code/.Rhistory
@@ -514,25 +518,17 @@ Ignored files:
     Ignored:    data/from_OCHCA/
 
 Untracked files:
+    Untracked:  analysis/2020-11-15_2020-12-20.Rmd
+    Untracked:  code/results/2020-11-15_2020-12-20/
     Untracked:  explore_environments.R
 
 Unstaged changes:
-    Modified:   analysis/2020-03-29_2020-05-03.Rmd
-    Modified:   analysis/2020-05-03_2020-06-07.Rmd
-    Modified:   analysis/2020-06-07_2020-07-12.Rmd
-    Modified:   analysis/2020-07-12_2020-08-16.Rmd
-    Modified:   analysis/2020-08-16_2020-09-20.Rmd
-    Modified:   analysis/2020-09-20_2020-10-25.Rmd
-    Modified:   analysis/2020-10-25_2020-11-29.Rmd
-    Modified:   analysis/2020-11-01_2020-12-06.Rmd
-    Modified:   analysis/2020-11-01_2020-12-06_anaheim.Rmd
-    Modified:   analysis/2020-11-01_2020-12-06_irvine.Rmd
-    Modified:   analysis/2020-11-01_2020-12-06_santa-ana.Rmd
-    Modified:   analysis/2020-11-08_2020-12-13.Rmd
-    Modified:   analysis/2020-11-08_2020-12-13_anaheim.Rmd
-    Modified:   analysis/2020-11-08_2020-12-13_irvine.Rmd
-    Modified:   analysis/2020-11-08_2020-12-13_santa-ana.Rmd
-    Modified:   code/analysis_template.Rmd
+    Modified:   analysis/_site.yml
+    Modified:   code/fit_new_model.R
+    Modified:   code/process_ochca_data.R
+    Modified:   data/data_for_calcat.csv
+    Modified:   data/oc_city_data.csv
+    Modified:   data/oc_data.csv
 
 </code></pre>
 <p>
@@ -571,6 +567,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/damonbayer/uci_covid_modeling2/blob/9115bccf33aaaa7babaaf2dc2d60c7d5ab3d44fe/analysis/2020-11-08_2020-12-13.Rmd" target="_blank">9115bcc</a>
+</td>
+<td>
+Damon Bayer
+</td>
+<td>
+2020-12-28
+</td>
+<td>
+x axes in historical plots (fix #4)
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/damonbayer/uci_covid_modeling2/9115bccf33aaaa7babaaf2dc2d60c7d5ab3d44fe/docs/2020-11-08_2020-12-13.html" target="_blank">9115bcc</a>
+</td>
+<td>
+Damon Bayer
+</td>
+<td>
+2020-12-28
+</td>
+<td>
+x axes in historical plots (fix #4)
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -714,6 +744,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/damonbayer/uci_covid_modeling2/blob/9115bccf33aaaa7babaaf2dc2d60c7d5ab3d44fe/docs/figure/2020-11-08_2020-12-13.Rmd/IFR R0 Plot-1.png" target="_blank">9115bcc</a>
+</td>
+<td>
+Damon Bayer
+</td>
+<td>
+2020-12-28
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/damonbayer/uci_covid_modeling2/blob/c9b71f2ccb4f187bff5dd0cd778c36fdf7359be5/docs/figure/2020-11-08_2020-12-13.Rmd/IFR R0 Plot-1.png" target="_blank">c9b71f2</a>
 </td>
 <td>
@@ -750,6 +791,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/damonbayer/uci_covid_modeling2/blob/9115bccf33aaaa7babaaf2dc2d60c7d5ab3d44fe/docs/figure/2020-11-08_2020-12-13.Rmd/IFR R0 Plot-2.png" target="_blank">9115bcc</a>
+</td>
+<td>
+Damon Bayer
+</td>
+<td>
+2020-12-28
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/damonbayer/uci_covid_modeling2/blob/c9b71f2ccb4f187bff5dd0cd778c36fdf7359be5/docs/figure/2020-11-08_2020-12-13.Rmd/IFR R0 Plot-2.png" target="_blank">c9b71f2</a>
@@ -808,7 +860,7 @@ Damon Bayer
 <div id="summary-statements-are-made-assuming-95-credibility-levels" class="section level2">
 <h2>Summary (statements are made assuming 95% credibility levels)</h2>
 <ul>
-<li>The number of reported cases (117,388, shown as black bars in the top-middle plot above) underestimates the actual number of infections by a factor that ranges between 4.1 and 15.9. This means that we estimate that the total number of infections which occurred by December 13, 2020 is between 477,468 and 1,863,077. We estimate that the total number of infections will be between 783,171 and 2,633,199 on January 12, 2021.</li>
+<li>The number of reported cases (117,529, shown as black bars in the top-middle plot above) underestimates the actual number of infections by a factor that ranges between 4.1 and 15.9. This means that we estimate that the total number of infections which occurred by December 13, 2020 is between 477,468 and 1,863,077. We estimate that the total number of infections will be between 783,171 and 2,633,199 on January 12, 2021.</li>
 <li>Prevalence (number of infectious individuals at any time point) is increasing and projected to be between 146,489 and 733,560 on January 12, 2021.</li>
 <li>Somewhere between 0.05% and 0.50% of all infections (not cases!) result in death.</li>
 <li>Basic reproductive number (<span class="math inline">\(R_0\)</span>), defined as the average number of secondary infections one infectious individual produces in a completely susceptible population, is estimated to be between 1.7 and 3.2.</li>
@@ -901,7 +953,7 @@ other attached packages:
  [5] scales_1.1.1    tidybayes_2.1.1 forcats_0.5.0   stringr_1.4.0  
  [9] dplyr_1.0.2     purrr_0.3.4     readr_1.3.1     tidyr_1.1.2    
 [13] tibble_3.0.3    ggplot2_3.3.2   tidyverse_1.3.0 fs_1.5.0       
-[17] lubridate_1.7.9
+[17] lubridate_1.7.9 workflowr_1.6.2
 
 loaded via a namespace (and not attached):
  [1] Rcpp_1.0.5           lattice_0.20-41      odeintr_1.7.1       
@@ -914,17 +966,17 @@ loaded via a namespace (and not attached):
 [22] munsell_0.5.0        broom_0.7.0          compiler_4.0.3      
 [25] httpuv_1.5.4         modelr_0.1.8         xfun_0.17           
 [28] pkgconfig_2.0.3      htmltools_0.5.0      tidyselect_1.1.0    
-[31] workflowr_1.6.2      arrayhelpers_1.1-0   fansi_0.4.1         
-[34] crayon_1.3.4         dbplyr_1.4.4         withr_2.3.0         
-[37] later_1.1.0.1        ggdist_2.2.0         grid_4.0.3          
-[40] distributional_0.2.0 jsonlite_1.7.1       gtable_0.3.0        
-[43] lifecycle_0.2.0      DBI_1.1.0            git2r_0.27.1        
-[46] magrittr_1.5         cli_2.0.2            stringi_1.5.3       
-[49] farver_2.0.3         promises_1.1.1       xml2_1.3.2          
-[52] ellipsis_0.3.1       generics_0.0.2       vctrs_0.3.4         
-[55] RColorBrewer_1.1-2   tools_4.0.3          svUnit_1.0.3        
-[58] hms_0.5.3            yaml_2.2.1           colorspace_1.4-1    
-[61] rvest_0.3.6          knitr_1.30           haven_2.3.1         </code></pre>
+[31] arrayhelpers_1.1-0   fansi_0.4.1          crayon_1.3.4        
+[34] dbplyr_1.4.4         withr_2.3.0          later_1.1.0.1       
+[37] distributional_0.2.0 ggdist_2.2.0         grid_4.0.3          
+[40] jsonlite_1.7.1       gtable_0.3.0         lifecycle_0.2.0     
+[43] DBI_1.1.0            git2r_0.27.1         magrittr_1.5        
+[46] cli_2.0.2            stringi_1.5.3        farver_2.0.3        
+[49] promises_1.1.1       xml2_1.3.2           ellipsis_0.3.1      
+[52] generics_0.0.2       vctrs_0.3.4          RColorBrewer_1.1-2  
+[55] tools_4.0.3          svUnit_1.0.3         hms_0.5.3           
+[58] yaml_2.2.1           colorspace_1.4-1     rvest_0.3.6         
+[61] knitr_1.30           haven_2.3.1         </code></pre>
 </div>
 </div>
 </div>

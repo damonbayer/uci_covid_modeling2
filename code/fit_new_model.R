@@ -72,7 +72,9 @@ target <- prior_model_epi_curves %>%
 init_states <- c(S = popsize - sum(round(colMeans(target[,-1]))), round(colMeans(target[,-1])))
 # Find MLE for C
 C <- inflation_factor * optimize(f = function(C) sum(extraDistr::ddirmnom(x = target, size = popsize, alpha = init_states / C, log = T)), lower = 1, upper = 100000, maximum = T)$maximum
-
+if (C == 100000 * inflation_factor) {
+  warning("Maximum C reached")
+}
 # rdirmnom(n = 2000, size = popsize, alpha = init_states / C) %>%
 #   `colnames<-`(c("S", "E", "Ie", "Ip", "R", "D")) %>%
 #   as_tibble() %>%
