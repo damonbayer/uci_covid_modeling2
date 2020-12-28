@@ -263,7 +263,7 @@ future_prevalence_upper_est <- filter(d_i_p_paths, name == "prevalence", date ==
 
 ifr_est <- ifr_R0_samples %>% filter(end_date == max(end_date)) %>% pull(ifr) %>% quantile(c(0.025, 0.975))
 R0_est <- ifr_R0_samples %>% filter(end_date == max(end_date)) %>% pull(R0) %>% quantile(c(0.025, 0.975))
-Reff_est <- Reff_intervals %>% drop_na() %>% filter(date == max(date), .width == 0.95) %>% select(".lower", ".upper") %>% pivot_longer(everything()) %>% deframe()
+Reff_est <- Reff_intervals %>% drop_na() %>% filter(date == last_day + 9, .width == 0.95) %>% select(".lower", ".upper") %>% pivot_longer(everything()) %>% deframe()
 ```
 
 
@@ -274,7 +274,9 @@ We estimate that the total number of infections will be between  `r comma(round(
 - Prevalence (number of infectious individuals at any time point) is `r prevalence_direction` and projected to be between `r comma(round(future_prevalence_lower_est))` and `r comma(round(future_prevalence_upper_est))` on `r format(last_forecast_day,'%B %d, %Y')`.
 - Somewhere between `r percent(ifr_est[["2.5%"]], accuracy = 0.01)` and `r percent(ifr_est[["97.5%"]], accuracy = 0.01)` of all infections (not cases!) result in death.
 - Basic reproductive number ($R_0$), defined as the average number of secondary infections one infectious individual produces in a completely susceptible population, is estimated to be between `r round(R0_est[["2.5%"]], 1)` and `r round(R0_est[["97.5%"]], 1)`.
-- Effective reproductive number ($R_e$), defined as its basic counterpart above, but allowing for some fraction of the population to be removed (recovered or deceased), is estimated to be between `r round(Reff_est[[".lower"]], 1)` and `r round(Reff_est[[".upper"]], 1)` on `r format(last_day,'%B %d, %Y')`. **We want to keep $R_e < 1$ in order to control virus transmission**.
+- Effective reproductive number ($R_e$), defined as its basic counterpart above, but allowing for some fraction of the population to be removed (recovered or deceased), is estimated to be between `r round(Reff_est[[".lower"]], 1)` and `r round(Reff_est[[".upper"]], 1)` on `r format(last_day + 9,'%B %d, %Y')`. **We want to keep $R_e < 1$ in order to control virus transmission**.
+
+Note: We previously created a report using a similar model with a different implementation. Archives of the old report can be found [here](https://vnminin.github.io/uci_covid_modeling/).
 
 <hr style="height:3px;border-width:0;color:gray;background-color:gray">
 
