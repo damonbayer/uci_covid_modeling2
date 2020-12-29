@@ -5,8 +5,7 @@ navbar:
   left:
   - text: Latest Report
     href: index.html
-  - icon: fa-city
-    text: City Reports
+  - text: City Reports
     menu:
     - text: Anaheim
       href: anaheim.html
@@ -14,8 +13,7 @@ navbar:
       href: irvine.html
     - text: Santa Ana
       href: santa-ana.html
-  - icon: fa-archive
-    text: Archived Reports
+  - text: Archived Reports
     menu:
     - text: Nov 15 - Dec 20
       href: 2020-11-15_2020-12-20.html

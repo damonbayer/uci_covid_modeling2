@@ -91,7 +91,7 @@ archive_menu_new <-
   str_c(
     str_c('      - text: \"', format(rev(all_models_for_yml$start_date), "%b %e"), " - ", format(rev(all_models_for_yml$end_date), "%b %e"), '\"'),
     str_c("        href: ", rev(all_models_for_yml$folder), ".html"),
-    sep = "\n") %>%
+    sep = "\n") %>%d
   str_split(pattern = "\\n") %>%
   unlist()
 
@@ -107,6 +107,16 @@ workflowr::wflow_build()
 file_copy(path = path("docs", tail(all_models_for_yml, 1)$folder, ext = "html"),
           new_path = path("docs", "index", ext = "html"),
           overwrite = T)
+
+
+# Replace Cities ----------------------------------------------------------
+rmd_tbl %>%
+  drop_na() %>%
+  group_by(city_name) %>%
+  filter(end_date == max(end_date)) %>%
+  mutate(html_path = path("docs", path_ext_set(path_file(rmd_path), "html"))) %>%
+  mutate(html_dest = path("docs", city_folder, ext = "html")) %>%
+  map2(.x = .$html_path, .y = .$html_dest, .f = ~file_copy(path = .x, new_path = .y, overwrite = T))
 
 # View Site ---------------------------------------------------------------
 wflow_view()
