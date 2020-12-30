@@ -60,6 +60,9 @@ rmd_tbl <-
         rmd[rmd == "## LOCATION_HERE, CA COVID-19 Situation Report, `r format(last_day + 8, \"%B %e, %Y\")`"] %>%
         str_replace("LOCATION_HERE", location_name)
 
+      rmd[rmd == "location_name <- NA"] <- rmd[rmd == "location_name <- NA"] %>%
+        str_replace("NA", str_c('\"', location_name, '\"'))
+
       if(!is.na(city_name)) {
         rmd[rmd == "city_name <- NA"] <-
           rmd[rmd == "city_name <- NA"] %>%
