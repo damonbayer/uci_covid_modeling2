@@ -2,93 +2,10 @@ library(tidyverse)
 library(lubridate)
 library(here)
 
-line_list_path = "data/from_OCHCA/12.28.20 release to UCI team.csv"
-negative_line_list_path <- "data/from_OCHCA/All ELR PCR tests updated 12.28.20.csv"
+line_list_path = "data/from_OCHCA/1.4.21 release to UCI team.csv"
+negative_line_list_path <- "data/from_OCHCA/All ELR PCR tests updated 1.4.21.csv"
 
-negative_test_synonyms <- c("not detected",
-                            "negative",
-                            "coronavirus 2019 novel not detected",
-                            "negative (qualifier value)",
-                            "not detected (qualifier value)",
-                            "sars cov-2 negative",
-                            "undetected",
-                            "inst_negative",
-                            "neg-see report",
-                            "sars-cov-2 rna not detected by naa",
-                            "none detected",
-                            "not detected in pooled specimen",
-                            "not detected in pooled specimen (qualifier value)",
-                            "non-reactive")
-
-positive_test_synonyms <- c("detected",
-                            "coronavirus 2019 novel positive",
-                            "positive",
-                            "positive (qualifier value)",
-                            "sars cov-2 positive",
-                            "detected (qualifier value)",
-                            "presumptive pos",
-                            "positive for 2019-ncov",
-                            "presumptive positive",
-                            "coronavirus 2019 novel presumptive pos",
-                            "coronavirus 2019 novel detected",
-                            "yes",
-                            "coronavirus 2019 novel",
-                            "presumptive positive for 2019-ncov",
-                            "sars cov-2 presumptive pos",
-                            "presumptive pos. for 2019-ncov",
-                            "presumptive positive (qualifier value)",
-                            "presumptive detected",
-                            "reactive",
-                            "sars-cov-2",
-                            "interpretive information: 2019 novel coronavirus sars-cov-2 by pcr")
-
-other_test_synonyms <- c("inconclusive",
-                         "indeterminate",
-                         "specimen unsatisfactory",
-                         "invalid",
-                         "test not performed",
-                         "not provided (qualifier value)",
-                         "see comment",
-                         "tnp",
-                         "coronavirus 2019 novel inconclusive",
-                         "not tested",
-                         "phoned results (and readback confirmed) to:",
-                         "see note",
-                         "clotted",
-                         "coronavirus 2019 novel unsatisfactory",
-                         # "cryptococcus neoformans",
-                         "equivocal",
-                         "non reactive",
-                         "result comments",
-                         "sars cov-2 inconclusive",
-                         "test not done",
-                         "test not perf",
-                         "not pregnant",
-                         "biofiresarsneg",
-                         "equivocal result",
-                         "coronavirus 2019 novel inconcluside",
-                         "unsatisfactory",
-                         "undefined",
-                         "*corrected report* by",
-                         "specimen unsatifactory for evaluation",
-                         "warning....please disregard results.",
-                         "presumptive result to be confirmed",
-                         "indeterminate (qualifier value)",
-                         "invalid result",
-                         "specimen unsatisfactory for evaluation",
-                         "specimen received mislabeled",
-                         "enterococcus faecalis",
-                         "carbapenem resistant pseudomonas aeruginosa",
-                         "enterobacter cloacae complex (organism)",
-                         "unknown",
-                         "multiple drug-resistant serratia marcescens",
-                         "genus enterococcus",
-                         "acinetobacter baumannii (organism)",
-                         "test not done (qualifier value)",
-                         "due to possible inhibitory substances in this patient sample, the test result was invalid. it is recommended that a new sample and order be submitted for retesting.",
-                         "not performed"
-)
-
+source('code/synonyms.R')
 
 metadata_zip <- tibble(
   zip = c(
@@ -188,11 +105,7 @@ neg_line_list <- read_csv(negative_line_list_path,
   arrange(date) %>%
   ungroup()
 
-
-if(length(levels(neg_line_list$test_result)) != 3) {
-  stop("New test result category not accounted for.")
-  warning(cat(levels(neg_line_list$test_result), sep = "\n"))
-}
+if(length(levels(neg_line_list$test_result)) != 3) stop(str_c(c("New test result category not accounted for.",levels(neg_line_list$test_result)), collapse = "\n"))
 
 
 # Create OC Data ----------------------------------------------------------
