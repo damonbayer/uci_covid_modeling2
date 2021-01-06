@@ -94,11 +94,11 @@ archive_menu_new <-
   str_c(
     str_c('      - text: \"', format(rev(all_models_for_yml$start_date), "%b %e"), " - ", format(rev(all_models_for_yml$end_date), "%b %e"), '\"'),
     str_c("        href: ", rev(all_models_for_yml$folder), ".html"),
-    sep = "\n") %>%d
+    sep = "\n") %>%
   str_split(pattern = "\\n") %>%
   unlist()
 
-site_yml <-c(site_yml_old[1:archive_menu_begin], archive_menu_new, site_yml_old[archive_menu_end:length(site_yml_old)])
+site_yml <- c(site_yml_old[1:archive_menu_begin], archive_menu_new, site_yml_old[archive_menu_end:length(site_yml_old)])
 
 # Write new site yml
 write_lines(site_yml, path = "analysis/_site.yml")
