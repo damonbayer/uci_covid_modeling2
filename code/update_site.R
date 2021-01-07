@@ -81,7 +81,7 @@ invisible(map2(rmd_tbl$rmd, rmd_tbl$rmd_path, ~write_lines(x = .x, path = .y)))
 
 # YML ---------------------------------------------------------------------
 site_yml_old <- read_lines("analysis/_site.yml")
-archive_menu_begin <- which(site_yml_old == "  - text: Archived Reports") + 1
+archive_menu_begin <- which(site_yml_old == "    icon: fas fa-archive") + 1
 archive_menu_end <- which(site_yml_old == "  - text: About")
 
 all_models_for_yml <-
@@ -104,6 +104,7 @@ site_yml <- c(site_yml_old[1:archive_menu_begin], archive_menu_new, site_yml_old
 write_lines(site_yml, path = "analysis/_site.yml")
 
 # Build Site --------------------------------------------------------------
+# workflowr::wflow_build(files = tail(rmd_tbl$rmd_path, 1))
 workflowr::wflow_build()
 
 # Replace Homepage --------------------------------------------------------

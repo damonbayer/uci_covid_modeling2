@@ -24,6 +24,7 @@ library(glue)
 library(stemr)
 library(cowplot)
 library(coda)
+library(patchwork)
 theme_set(theme_bw(base_size = 22)) 
 source("code/stemr_functions.R")
 
@@ -328,3 +329,54 @@ Similarly we assume that observed deaths are noisy realizations of the actual nu
 *A priori*, we assume that death counts are significantly less noisy than case counts.
 We use a Bayesian estimation framework, which means that all estimated quantities receive credible intervals (e.g., 80% or 95% credible intervals). 
 Width of these credible intervals encode the amount of uncertainty that we have in the estimated quantities. 
+
+
+### Posterior Predictive Plots
+```{r Posterior Predictive}
+cases_deaths_pp <- 
+  forecast_obj$forecast_results$datasets %>%
+  map_dfr(as_tibble) %>% 
+  pivot_longer(-time) %>% 
+  group_by(time, name) %>% 
+  median_qi(.width = ci_width) %>% 
+  left_join(select(forecast_obj$data, time, date = end_date, tests)) %>% 
+  ungroup() %>% 
+  select(-time) %>% 
+  named_group_split(name)
+
+deaths_pp_plot <- 
+  ggplot() +
+  geom_lineribbon(data = cases_deaths_pp$deaths,
+                  mapping = aes(date, value, ymin = .lower, ymax = .upper)) +
+  geom_point(data = drop_na(filter(forecast_obj$data, end_date <= last_day)),
+             mapping = aes(end_date, deaths)) +
+  scale_fill_brewer(name = "Credibility level", labels = str_c(percent(rev(ci_width))), guide = guide_legend(title.position = "top", direction = "horizontal")) +
+  scale_y_continuous(name = "Deaths", labels = comma) +
+  scale_x_date(name = "Date", breaks = c("2 week"), date_labels = "%b\n%e") +
+  theme(
+    strip.background = element_blank(),
+    strip.placement = "outside",
+    strip.text = element_text(size = 22),
+    legend.position = c(0.3, 0.85), legend.title = element_text(size = 15.5), legend.text = element_text(size = 15.5), legend.background = element_rect(fill = "transparent")
+  )
+
+positivity_pp_plot <- 
+  ggplot() +
+  geom_lineribbon(data = mutate(cases_deaths_pp$cases, across(c(value, .lower, .upper), ~`/`(., tests))),
+                  mapping = aes(date, value, ymin = .lower, ymax = .upper, )) +
+  geom_point(data = drop_na(filter(forecast_obj$data, end_date <= last_day)),
+             mapping = aes(end_date, cases / tests)) +
+  scale_fill_brewer(name = "Credibility level", labels = str_c(percent(rev(ci_width))), guide = guide_legend(title.position = "top", direction = "horizontal")) +
+  scale_y_continuous(name = "Positivity", labels = percent) +
+  scale_x_date(name = "Date", breaks = c("2 week"), date_labels = "%b\n%e") +
+  theme(
+    strip.background = element_blank(),
+    strip.placement = "outside",
+    strip.text = element_text(size = 22),
+    legend.position = "none", legend.title = element_text(size = 15.5), legend.text = element_text(size = 15.5), legend.background = element_rect(fill = "transparent")
+  )
+
+deaths_pp_plot + positivity_pp_plot +   
+  plot_annotation(title = 'Observed & Predicted Deaths and Positive Test Percent in 3 Day Periods', theme=theme(plot.title = element_text(hjust = 0.2)))
+```
+

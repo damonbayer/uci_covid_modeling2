@@ -160,3 +160,12 @@ dataset_to_list <- function(dat) {
   }
   dat_list
 }
+
+named_group_split <- function(.tbl, ...) {
+  grouped <- group_by(.tbl, ...)
+  names <- rlang::eval_bare(rlang::expr(paste(!!!group_keys(grouped), sep = " / ")))
+
+  grouped %>%
+    group_split(.keep = F) %>%
+    rlang::set_names(names)
+}
