@@ -145,7 +145,7 @@ ifr_R0_samples <-
   group_by(month = month(start_date)) %>%
   mutate(model_within_month = row_number()) %>% 
   ungroup() %>% 
-  filter((model_number %in% 1:3) | model_within_month == 1) %>% # Show last 3 models + 1 from each prior month
+  # filter((model_number %in% 1:3) | model_within_month == 1) %>% # Show last 3 models + 1 from each prior month
   mutate(parameter_samples_human = map(multi_chain_stem_fit, ~extract_stem_parameter_posterior(., transform = to_human_scale))) %>% 
   mutate(parameter_samples_human = map(parameter_samples_human, tidy_draws)) %>% 
   select(ends_with("date"), parameter_samples_human) %>% 
