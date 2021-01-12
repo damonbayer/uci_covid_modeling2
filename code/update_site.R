@@ -1,7 +1,7 @@
 library(tidyverse)
 library(lubridate)
 library(fs)
-
+n_models_to_archive <- 4
 
 # dput(unique(read_csv("data/oc_city_data.csv", col_types = cols(.default = col_skip(), city = col_character()))$city))
 
@@ -56,8 +56,8 @@ rmd_tbl <-
         rmd[rmd == "results_folder <- RESULTS_FOLDER_HERE"] %>%
         str_replace("RESULTS_FOLDER_HERE", str_c('\"', path, '\"'))
 
-      rmd[rmd == "## LOCATION_HERE, CA COVID-19 Situation Report, `r format(last_day + 8, \"%B %e, %Y\")`"] <-
-        rmd[rmd == "## LOCATION_HERE, CA COVID-19 Situation Report, `r format(last_day + 8, \"%B %e, %Y\")`"] %>%
+      rmd[rmd == "## LOCATION_HERE, CA COVID-19 Situation Report, `r format(last_day + 5, \"%B %e, %Y\")`"] <-
+        rmd[rmd == "## LOCATION_HERE, CA COVID-19 Situation Report, `r format(last_day + 5, \"%B %e, %Y\")`"] %>%
         str_replace("LOCATION_HERE", location_name)
 
       rmd[rmd == "location_name <- NA"] <- rmd[rmd == "location_name <- NA"] %>%
@@ -88,7 +88,8 @@ all_models_for_yml <-
   all_models %>%
   filter(is.na(city_folder)) %>%
   mutate(folder = path_file(path)) %>%
-  select(start_date, end_date, folder)
+  select(start_date, end_date, folder) %>%
+  tail(n_models_to_archive)
 
 archive_menu_new <-
   str_c(
@@ -104,8 +105,14 @@ site_yml <- c(site_yml_old[1:archive_menu_begin], archive_menu_new, site_yml_old
 write_lines(site_yml, path = "analysis/_site.yml")
 
 # Build Site --------------------------------------------------------------
-# workflowr::wflow_build(files = tail(rmd_tbl$rmd_path, 1))
-workflowr::wflow_build()
+rmd_to_build <- c(path("analysis", all_models_for_yml$folder, ext = "Rmd"),
+  dir_ls("analysis")[dir_ls("analysis") %>% path_file() %>% str_sub(end = 21) == tail(all_models_for_yml$folder, 1)],
+  dir_ls("analysis")[dir_ls("analysis") %>% path_file() %>% str_starts("\\d|_", negate = T)]) %>%
+  unique() %>%
+  unname()
+
+workflowr::wflow_build(files = rmd_to_build)
+wflow_build(rmd_to_build[4])
 
 # Replace Homepage --------------------------------------------------------
 file_copy(path = path("docs", tail(all_models_for_yml, 1)$folder, ext = "html"),

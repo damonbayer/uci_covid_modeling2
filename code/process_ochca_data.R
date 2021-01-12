@@ -2,8 +2,8 @@ library(tidyverse)
 library(lubridate)
 library(here)
 
-line_list_path = "data/from_OCHCA/1.4.21 release to UCI team.csv"
-negative_line_list_path <- "data/from_OCHCA/All ELR PCR tests updated 1.4.21.csv"
+line_list_path = "data/from_OCHCA/1.11.21 release to UCI team.csv"
+negative_line_list_path <- "data/from_OCHCA/All ELR PCR tests updated 1.11.21.csv"
 
 source('code/synonyms.R')
 
@@ -186,3 +186,8 @@ write_csv(oc_city_data, "data/oc_city_data.csv")
 write_csv(oc_city_data, "~/Documents/uci_covid19_dashboard/data/oc_city_data.csv")
 write_csv(oc_zip_month_data, "~/Documents/uci_covid19_dashboard/data/oc_zip_month_data.csv")
 write_csv(oc_city_incid, "data/oc_city_incidence.csv")
+
+
+# Create ECDF -------------------------------------------------------------
+death_delay_ecdf <- ecdf(as.numeric(deaths_tbl$Date.death.posted - deaths_tbl$DtDeath))
+write_rds(death_delay_ecdf, path = "data/death_delay_ecdf.rds")

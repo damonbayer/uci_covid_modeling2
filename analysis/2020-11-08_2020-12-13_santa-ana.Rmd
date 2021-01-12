@@ -65,7 +65,7 @@ prev_models <-
          forecast_obj = map(path(path, "forecast", ext = "rds"), read_rds))
 ```
 
-## Santa Ana, CA COVID-19 Situation Report, `r format(last_day + 8, "%B %e, %Y")`
+## Santa Ana, CA COVID-19 Situation Report, `r format(last_day + 5, "%B %e, %Y")`
 #### Report period: `r format(first_day, "%b %d")` - `r format(last_day, "%b %d")` (we don't use the most recent data due to reporting delays)
 
 The goal of this report is to inform interested parties about dynamics of SARS-CoV-2 spread in Orange County, CA and to predict epidemic trajectories. 
@@ -292,7 +292,7 @@ Our method takes three time series as input: daily new tests, case counts, and d
 
 ```{r model-inputs}
 multi_chain_stem_fit$data %>% 
-  dplyr::select(-start_date, -time) %>% 
+  dplyr::select(-start_date, -time, -prop_deaths_reported) %>% 
   pivot_longer(-end_date) %>% 
   mutate(name = str_to_title(name)) %>% 
   mutate(name = fct_relevel(name, c("Tests", "Cases", "Deaths"))) %>% 
