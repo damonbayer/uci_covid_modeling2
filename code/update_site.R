@@ -112,7 +112,6 @@ rmd_to_build <- c(path("analysis", all_models_for_yml$folder, ext = "Rmd"),
   unname()
 
 workflowr::wflow_build(files = rmd_to_build)
-wflow_build(rmd_to_build[4])
 
 # Replace Homepage --------------------------------------------------------
 file_copy(path = path("docs", tail(all_models_for_yml, 1)$folder, ext = "html"),

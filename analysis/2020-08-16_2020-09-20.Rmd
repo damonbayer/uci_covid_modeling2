@@ -290,10 +290,11 @@ A more fleshed out method description is in the [manuscript](https://arxiv.org/a
 ### Model inputs
 Our method takes three time series as input: daily new tests, case counts, and deaths. However, we find daily resolution to be too noisy due to delay in testing reports, weekend effect, etc. So we aggregated/binned the three types of counts in 3 day intervals. These aggregated time series are shown below.
 
-```{r model-inputs}
+```{r model-inputs, fig.height=8, fig.width=12}
 multi_chain_stem_fit$data %>% 
-  dplyr::select(-start_date, -time, -prop_deaths_reported) %>% 
+  dplyr::select(-start_date, -time) %>% 
   pivot_longer(-end_date) %>% 
+  mutate(name = if_else(name == "prop_deaths_reported", "Probability Death Reported", name)) %>% 
   mutate(name = str_to_title(name)) %>% 
   mutate(name = fct_relevel(name, c("Tests", "Cases", "Deaths"))) %>% 
   ggplot(aes(end_date, value)) +
