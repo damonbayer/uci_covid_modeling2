@@ -196,7 +196,7 @@ ifr_R0_intervals %>%
   geom_lineribbon(color = "steelblue4") +
   ggtitle("Historical estimates of infection-to-fatality ratio (IFR)") +
   scale_fill_brewer(name = "Credibility level", labels = str_c(percent(rev(ci_width))), guide = guide_legend(title.position = "top", direction = "horizontal")) +
-  scale_y_continuous(name = "IFR", label = percent) +
+  scale_y_continuous(name = "IFR", limits = c(0, NA), label = percent) +
   scale_x_date(name = "Date", date_breaks = "1 month", date_labels = "%b", limits = as_date(c(NA, last_forecast_day))) +
   theme(legend.position = c(0.8, 0.8), legend.title = element_text(size = 15.5), legend.text = element_text(size = 15.5), legend.background = element_rect(fill = "transparent"))
 
@@ -207,7 +207,7 @@ ifr_R0_intervals %>%
   geom_hline(yintercept = 1, linetype = "dashed") +
   ggtitle(expression(paste('Historical estimates of the basic reproductive number (', R[0], ')'))) +
   scale_fill_brewer(name = "Credibility level", labels = str_c(percent(rev(ci_width))), guide = guide_legend(title.position = "top", direction = "horizontal")) +
-  scale_y_continuous(name = expression(R[0])) +
+  scale_y_continuous(name = expression(R[0]), limits = c(0, NA)) +
   scale_x_date(name = "Date", date_breaks = "1 month", date_labels = "%b", limits = as_date(c(NA, last_forecast_day))) +
   theme(legend.position = c(0.2, 0.8), legend.title = element_text(size = 15.5), legend.text = element_text(size = 15.5), legend.background = element_rect(fill = "transparent"))
 ```
@@ -245,7 +245,7 @@ Reff_intervals %>%
   geom_hline(yintercept = 1, linetype = "dashed") +
   scale_fill_brewer(name = "Credibility level", labels = str_c(percent(rev(ci_width))), guide = guide_legend(title.position = "top", direction = "horizontal")) +
   ggtitle(expression(paste('Historical estimates of the effective reproductive number (', R[e], ')'))) +
-  ylab(expression(R[e])) +
+  scale_y_continuous(name = expression(R[e]), limits = c(0, NA)) +
   scale_x_date(name = "Date", date_breaks = "1 month", date_labels = "%b") +
   theme(legend.position = c(0.2, 0.8), legend.title = element_text(size = 15.5), legend.text = element_text(size = 15.5), legend.background = element_rect(fill = "transparent"))
 ```
@@ -291,22 +291,33 @@ A more fleshed out method description is in the [manuscript](https://arxiv.org/a
 Our method takes three time series as input: daily new tests, case counts, and deaths. However, we find daily resolution to be too noisy due to delay in testing reports, weekend effect, etc. So we aggregated/binned the three types of counts in 3 day intervals. These aggregated time series are shown below.
 
 ```{r model-inputs, fig.height=8, fig.width=12}
-multi_chain_stem_fit$data %>% 
-  dplyr::select(-start_date, -time) %>% 
-  pivot_longer(-end_date) %>% 
-  mutate(name = if_else(name == "prop_deaths_reported", "Probability Death Reported", name)) %>% 
-  mutate(name = str_to_title(name)) %>% 
-  mutate(name = fct_relevel(name, c("Tests", "Cases", "Deaths"))) %>% 
-  ggplot(aes(end_date, value)) +
-  geom_line(size=1) +
-  geom_point(size=3) +
-  facet_wrap(. ~ name, scales = "free_y") +
-  xlab("Date") +
-  ylab("Count") +
-  scale_y_continuous(labels = comma) + 
-  ggtitle(str_c(location_name, ", CA data"), subtitle = "Counts binned into 3 day periods") +
-  scale_x_date(breaks=c("10 day"), date_labels = "%b %d", ) +
-  theme(strip.text = element_text(size = 20))
+ggplot(multi_chain_stem_fit$data, aes(end_date, tests)) +
+  geom_line() + 
+  geom_point() +
+  scale_y_continuous(name = "Tests", labels = comma) +
+  scale_x_date(name = "Date", breaks = c("10 day"), date_labels = "%b %d") +
+  ggplot(multi_chain_stem_fit$data, aes(end_date, cases)) +
+  geom_line() + 
+  geom_point() +
+  scale_y_continuous(name = "Cases", labels = comma) +
+  scale_x_date(name = "Date", breaks = c("10 day"), date_labels = "%b %d") +
+  ggplot(multi_chain_stem_fit$data, aes(end_date, deaths)) +
+  geom_line() + 
+  geom_point() +
+  scale_y_continuous(name = "Deaths", labels = comma) +
+  scale_x_date(name = "Date", breaks = c("10 day"), date_labels = "%b %d") +
+  {
+    if ("prop_deaths_reported" %in% colnames(multi_chain_stem_fit$data)) {
+    ggplot(multi_chain_stem_fit$data, aes(end_date, prop_deaths_reported)) +
+      geom_line() +
+      geom_point() +
+      scale_y_continuous(name = "Probability Death Reported",
+                         labels = percent,
+                         limits = c(0,1))
+    } else NULL } +
+  patchwork::plot_layout(ncol = 2, nrow = 2, ) +
+  patchwork::plot_annotation(title = str_c(location_name, ", CA data"),
+                             subtitle = "Counts binned into 3 day periods")
 ```
 
 ### Model structure
