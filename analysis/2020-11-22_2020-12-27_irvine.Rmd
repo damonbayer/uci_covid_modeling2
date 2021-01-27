@@ -89,6 +89,7 @@ i_p_paths <-
   select(date, everything(), -time)
 
 deaths_at_t0 <- sum(oc_data[oc_data$date <= first_day, "deaths"])
+cases_at_t0 <- sum(oc_data[oc_data$date <= first_day, "cases"])
 
 d_paths <- forecast_obj$forecast_results %>% 
   select(starts_with("."), datasets) %>% 
@@ -106,10 +107,10 @@ d_paths <- forecast_obj$forecast_results %>%
 d_i_p_paths <- bind_rows(i_p_paths, d_paths)
 
 d_i_p_data <- 
-  oc_data %>% 
-  mutate(cumulative_deaths = cumsum(deaths),
-         incidence = cumsum(cases)) %>% 
-  select(date, cumulative_deaths, incidence) %>% 
+  multi_chain_stem_fit$data %>% 
+  mutate(cumulative_deaths = deaths_at_t0 + cumsum(deaths),
+         incidence = cases_at_t0 + cumsum(cases)) %>% 
+  select(date = end_date, cumulative_deaths, incidence) %>% 
   filter(date %in% unique(d_i_p_paths$date) & date <= last_day) %>% 
   pivot_longer(-date)
 
