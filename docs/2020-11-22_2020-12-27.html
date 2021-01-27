@@ -13,6 +13,7 @@
 
 <title>Orange County, CA COVID Situation Report Nov 22, 2020 - Dec 27, 2020</title>
 
+<script src="site_libs/header-attrs-2.6/header-attrs.js"></script>
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
@@ -32,6 +33,8 @@ div.section {
   padding-top: 12px;
 }
 </style>
+
+
 
 <style type="text/css">
   code{white-space: pre-wrap;}
@@ -329,6 +332,9 @@ $(document).ready(function () {
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
+      <a href="2020-12-16_2021-01-20.html">Dec 16 - Jan 20</a>
+    </li>
+    <li>
       <a href="2020-12-02_2021-01-06.html">Dec  2 - Jan  6</a>
     </li>
     <li>
@@ -336,9 +342,6 @@ $(document).ready(function () {
     </li>
     <li>
       <a href="2020-11-22_2020-12-27.html">Nov 22 - Dec 27</a>
-    </li>
-    <li>
-      <a href="2020-11-15_2020-12-20.html">Nov 15 - Dec 20</a>
     </li>
   </ul>
 </li>
@@ -381,7 +384,7 @@ $(document).ready(function () {
 
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
-<span class="glyphicon glyphicon-list" aria-hidden="true"></span> workflowr <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span>
+<span class="glyphicon glyphicon-list" aria-hidden="true"></span> workflowr <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
 </button>
 </p>
 <div id="workflowr-report" class="collapse">
@@ -390,7 +393,7 @@ $(document).ready(function () {
 <a data-toggle="tab" href="#summary">Summary</a>
 </li>
 <li>
-<a data-toggle="tab" href="#checks"> Checks <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> </a>
+<a data-toggle="tab" href="#checks"> Checks <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> </a>
 </li>
 <li>
 <a data-toggle="tab" href="#versions">Past versions</a>
@@ -399,10 +402,10 @@ $(document).ready(function () {
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2021-01-12
+<strong>Last updated:</strong> 2021-01-26
 </p>
 <p>
-<strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 6 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 1
+<strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 0
 </p>
 <p>
 <strong>Knit directory:</strong> <code>uci_covid_modeling2/</code> <span class="glyphicon glyphicon-question-sign" aria-hidden="true" title="This is the local directory in which the code in this file was executed."> </span>
@@ -418,12 +421,12 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguncommittedchanges"> <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> <strong>R Markdown file:</strong> uncommitted changes </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguptodate"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>R Markdown file:</strong> up-to-date </a>
 </p>
 </div>
-<div id="strongRMarkdownfilestronguncommittedchanges" class="panel-collapse collapse">
+<div id="strongRMarkdownfilestronguptodate" class="panel-collapse collapse">
 <div class="panel-body">
-<p>The R Markdown file has unstaged changes. To know which version of the R Markdown file created these results, you’ll want to first commit it to the Git repo. If you’re still working on the analysis, you can ignore this warning. When you’re finished, you can run <code>wflow_publish</code> to commit the R Markdown file and build the HTML.</p>
+<p>Great! Since the R Markdown file has been committed to the Git repository, you know the exact version of the code that produced these results.</p>
 </div>
 </div>
 </div>
@@ -490,16 +493,16 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomdamonbayerucicovidmodeling2treeb3e230f7441ce14651280101ab8790c34f7366b4targetblankb3e230fa"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/damonbayer/uci_covid_modeling2/tree/b3e230f7441ce14651280101ab8790c34f7366b4" target="_blank">b3e230f</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomdamonbayerucicovidmodeling2tree11f4456777793965673df85ea044ca44b8d8d23ctargetblank11f4456a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/damonbayer/uci_covid_modeling2/tree/11f4456777793965673df85ea044ca44b8d8d23c" target="_blank">11f4456</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomdamonbayerucicovidmodeling2treeb3e230f7441ce14651280101ab8790c34f7366b4targetblankb3e230fa" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomdamonbayerucicovidmodeling2tree11f4456777793965673df85ea044ca44b8d8d23ctargetblank11f4456a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
 </p>
 <p>
-The results in this page were generated with repository version <a href="https://github.com/damonbayer/uci_covid_modeling2/tree/b3e230f7441ce14651280101ab8790c34f7366b4" target="_blank">b3e230f</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+The results in this page were generated with repository version <a href="https://github.com/damonbayer/uci_covid_modeling2/tree/11f4456777793965673df85ea044ca44b8d8d23c" target="_blank">11f4456</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
 </p>
 <p>
 Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -523,50 +526,28 @@ Ignored files:
     Ignored:    data/from_OCHCA/
 
 Untracked files:
+    Untracked:  analysis/2020-12-16_2021-01-20.Rmd
+    Untracked:  analysis/2020-12-16_2021-01-20_anaheim.Rmd
+    Untracked:  analysis/2020-12-16_2021-01-20_irvine.Rmd
+    Untracked:  analysis/2020-12-16_2021-01-20_santa-ana.Rmd
     Untracked:  code/Untitled.R
     Untracked:  code/fit_new_model_command_args.R
+    Untracked:  code/process_ochca_data_old_format.R
     Untracked:  code/results/2020-12-02_2021-01-06/forecast_no_delay.rds
     Untracked:  code/results/2020-12-02_2021-01-06/original_no_delay.rds
+    Untracked:  code/results/2020-12-16_2021-01-20/
+    Untracked:  data/oc_data2.csv
     Untracked:  explore_environments.R
     Untracked:  explore_reporting_delay.R
     Untracked:  tweets.R
 
 Unstaged changes:
-    Modified:   analysis/2020-03-29_2020-05-03.Rmd
-    Modified:   analysis/2020-04-12_2020-05-17.Rmd
-    Modified:   analysis/2020-05-03_2020-06-07.Rmd
-    Modified:   analysis/2020-05-17_2020-06-21.Rmd
-    Modified:   analysis/2020-06-07_2020-07-12.Rmd
-    Modified:   analysis/2020-06-21_2020-07-26.Rmd
-    Modified:   analysis/2020-07-12_2020-08-16.Rmd
-    Modified:   analysis/2020-07-26_2020-08-30.Rmd
-    Modified:   analysis/2020-08-16_2020-09-20.Rmd
-    Modified:   analysis/2020-08-30_2020-10-04.Rmd
-    Modified:   analysis/2020-09-20_2020-10-25.Rmd
-    Modified:   analysis/2020-10-04_2020-11-08.Rmd
-    Modified:   analysis/2020-10-25_2020-11-29.Rmd
-    Modified:   analysis/2020-11-01_2020-12-06.Rmd
-    Modified:   analysis/2020-11-01_2020-12-06_anaheim.Rmd
-    Modified:   analysis/2020-11-01_2020-12-06_irvine.Rmd
-    Modified:   analysis/2020-11-01_2020-12-06_santa-ana.Rmd
-    Modified:   analysis/2020-11-08_2020-12-13.Rmd
-    Modified:   analysis/2020-11-08_2020-12-13_anaheim.Rmd
-    Modified:   analysis/2020-11-08_2020-12-13_irvine.Rmd
-    Modified:   analysis/2020-11-08_2020-12-13_santa-ana.Rmd
-    Modified:   analysis/2020-11-15_2020-12-20.Rmd
-    Modified:   analysis/2020-11-15_2020-12-20_anaheim.Rmd
-    Modified:   analysis/2020-11-15_2020-12-20_irvine.Rmd
-    Modified:   analysis/2020-11-15_2020-12-20_santa-ana.Rmd
-    Modified:   analysis/2020-11-22_2020-12-27.Rmd
-    Modified:   analysis/2020-11-22_2020-12-27_anaheim.Rmd
-    Modified:   analysis/2020-11-22_2020-12-27_irvine.Rmd
-    Modified:   analysis/2020-11-22_2020-12-27_santa-ana.Rmd
-    Modified:   analysis/2020-11-25_2020-12-30.Rmd
-    Modified:   analysis/2020-12-02_2021-01-06.Rmd
-    Modified:   analysis/2020-12-02_2021-01-06_anaheim.Rmd
-    Modified:   analysis/2020-12-02_2021-01-06_irvine.Rmd
-    Modified:   analysis/2020-12-02_2021-01-06_santa-ana.Rmd
-    Modified:   code/analysis_template.Rmd
+    Modified:   analysis/_site.yml
+    Modified:   code/process_ochca_data.R
+    Modified:   data/data_for_calcat.csv
+    Modified:   data/death_delay_ecdf.rds
+    Modified:   data/oc_city_data.csv
+    Modified:   data/oc_data.csv
 
 </code></pre>
 <p>
@@ -605,6 +586,74 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/damonbayer/uci_covid_modeling2/11f4456777793965673df85ea044ca44b8d8d23c/docs/2020-11-22_2020-12-27.html" target="_blank">11f4456</a>
+</td>
+<td>
+Damon Bayer
+</td>
+<td>
+2021-01-20
+</td>
+<td>
+Revert “2020-01-18 Update”
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/damonbayer/uci_covid_modeling2/847f3bd26b3dc5bb1c057c470f84769238093d85/docs/2020-11-22_2020-12-27.html" target="_blank">847f3bd</a>
+</td>
+<td>
+Damon Bayer
+</td>
+<td>
+2021-01-19
+</td>
+<td>
+2020-01-18 Update
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/damonbayer/uci_covid_modeling2/blob/518b7bf07b419eadcbc03373159da4a9be05e7e7/analysis/2020-11-22_2020-12-27.Rmd" target="_blank">518b7bf</a>
+</td>
+<td>
+Damon Bayer
+</td>
+<td>
+2021-01-12
+</td>
+<td>
+Small plot tweaks
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/damonbayer/uci_covid_modeling2/518b7bf07b419eadcbc03373159da4a9be05e7e7/docs/2020-11-22_2020-12-27.html" target="_blank">518b7bf</a>
+</td>
+<td>
+Damon Bayer
+</td>
+<td>
+2021-01-12
+</td>
+<td>
+Small plot tweaks
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -861,6 +910,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/damonbayer/uci_covid_modeling2/blob/518b7bf07b419eadcbc03373159da4a9be05e7e7/docs/figure/2020-11-22_2020-12-27.Rmd/IFR R0 Plot-1.png" target="_blank">518b7bf</a>
+</td>
+<td>
+Damon Bayer
+</td>
+<td>
+2021-01-12
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/damonbayer/uci_covid_modeling2/blob/b3e230f7441ce14651280101ab8790c34f7366b4/docs/figure/2020-11-22_2020-12-27.Rmd/IFR R0 Plot-1.png" target="_blank">b3e230f</a>
 </td>
 <td>
@@ -919,6 +979,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/damonbayer/uci_covid_modeling2/blob/518b7bf07b419eadcbc03373159da4a9be05e7e7/docs/figure/2020-11-22_2020-12-27.Rmd/IFR R0 Plot-2.png" target="_blank">518b7bf</a>
+</td>
+<td>
+Damon Bayer
+</td>
+<td>
+2021-01-12
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/damonbayer/uci_covid_modeling2/blob/b3e230f7441ce14651280101ab8790c34f7366b4/docs/figure/2020-11-22_2020-12-27.Rmd/IFR R0 Plot-2.png" target="_blank">b3e230f</a>
@@ -981,6 +1052,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/damonbayer/uci_covid_modeling2/blob/518b7bf07b419eadcbc03373159da4a9be05e7e7/docs/figure/2020-11-22_2020-12-27.Rmd/Reff Plot-1.png" target="_blank">518b7bf</a>
+</td>
+<td>
+Damon Bayer
+</td>
+<td>
+2021-01-12
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/damonbayer/uci_covid_modeling2/blob/b3e230f7441ce14651280101ab8790c34f7366b4/docs/figure/2020-11-22_2020-12-27.Rmd/Reff Plot-1.png" target="_blank">b3e230f</a>
 </td>
 <td>
@@ -1021,7 +1103,7 @@ Damon Bayer
 <div id="summary-statements-are-made-assuming-95-credibility-levels" class="section level2">
 <h2>Summary (statements are made assuming 95% credibility levels)</h2>
 <ul>
-<li>The number of reported cases (161,296, shown as black bars in the top-middle plot above) underestimates the actual number of infections by a factor that ranges between 3.3 and 12.7. This means that we estimate that the total number of infections which occurred by December 27, 2020 is between 532,533 and 2,041,675. We estimate that the total number of infections will be between 713,821 and 2,606,494 on January 26, 2021.</li>
+<li>The number of reported cases (154,235, shown as black bars in the top-middle plot above) underestimates the actual number of infections by a factor that ranges between 3.5 and 13.2. This means that we estimate that the total number of infections which occurred by December 27, 2020 is between 532,533 and 2,041,675. We estimate that the total number of infections will be between 713,821 and 2,606,494 on January 26, 2021.</li>
 <li>Prevalence (number of infectious individuals at any time point) is increasing and projected to be between 71,783 and 550,651 on January 26, 2021.</li>
 <li>Somewhere between 0.05% and 0.53% of all infections (not cases!) result in death.</li>
 <li>Basic reproductive number (<span class="math inline">\(R_0\)</span>), defined as the average number of secondary infections one infectious individual produces in a completely susceptible population, is estimated to be between 1.3 and 2.9.</li>
@@ -1059,6 +1141,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/damonbayer/uci_covid_modeling2/blob/518b7bf07b419eadcbc03373159da4a9be05e7e7/docs/figure/2020-11-22_2020-12-27.Rmd/model-inputs-1.png" target="_blank">518b7bf</a>
+</td>
+<td>
+Damon Bayer
+</td>
+<td>
+2021-01-12
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/damonbayer/uci_covid_modeling2/blob/b3e230f7441ce14651280101ab8790c34f7366b4/docs/figure/2020-11-22_2020-12-27.Rmd/model-inputs-1.png" target="_blank">b3e230f</a>
@@ -1246,6 +1339,8 @@ footer is added to webpages before the MathJax javascript. -->
     "HTML-CSS": { availableFonts: ["TeX"] }
   });
 </script>
+
+
 
 
 

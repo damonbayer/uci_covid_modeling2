@@ -2,10 +2,8 @@ library(tidyverse)
 library(lubridate)
 library(here)
 
-line_list_path = "data/from_OCHCA/1.11.21 release to UCI team.csv"
-negative_line_list_path <- "data/from_OCHCA/All ELR PCR tests updated 1.11.21.csv"
-
-source('code/synonyms.R')
+line_list_path = "data/from_OCHCA/1.26.21 release to UCI team.csv"
+negative_line_list_path <- "data/from_OCHCA/All PCR tests updated 1.26.21.csv"
 
 metadata_zip <- tibble(
   zip = c(
@@ -76,7 +74,8 @@ deaths_tbl <- read_csv(line_list_path,
   rename(zip = Zip) %>%
   select(-DeathDueCOVID)
 
-deaths_tbl_county <- deaths_tbl %>%
+deaths_tbl_county <-
+  deaths_tbl %>%
   select(-zip) %>%
   pivot_longer(everything()) %>%
   count(name, value) %>%
@@ -88,22 +87,24 @@ deaths_tbl_county <- deaths_tbl %>%
          deaths = DtDeath,
          deaths_calcat = Date.death.posted)
 
-neg_line_list <- read_csv(negative_line_list_path,
-                          col_types = cols(.default = col_skip(),
-                                           PersonId = col_integer(),
-                                           Specimen.Collected.Date = col_date("%m-%d-%Y"),
-                                           Resulted.Organism = col_character(),
-                                           Zip = col_character())) %>%
-  filter(!is.na(Resulted.Organism)) %>%
-  mutate(test_result = fct_collapse(str_to_lower(Resulted.Organism),
-                                    negative = negative_test_synonyms,
-                                    positive = positive_test_synonyms,
-                                    other = other_test_synonyms)) %>%
-  select(id = PersonId, date = Specimen.Collected.Date, zip = Zip, test_result) %>%
+neg_line_list <-
+  read_csv(negative_line_list_path,
+           col_types = cols(.default = col_skip(),
+                            unique_num = col_character(),
+                            Specimen.Collected.Date = col_date("%Y-%m-%d"),
+                            TestResult = col_character(),
+                            Zip = col_character())) %>%
+  select(id = unique_num, date = Specimen.Collected.Date, zip = Zip, test_result = TestResult) %>%
+  filter(!(is.na(id) | is.na(test_result))) %>%
+  mutate(test_result = fct_collapse(str_to_lower(test_result),
+                                    negative = "negative",
+                                    positive = "positive",
+                                    other = c("invalid", "inconclusive"))) %>%
   filter(date >= lubridate::ymd("2020-01-01")) %>%
   group_by(id) %>%
   arrange(date) %>%
   ungroup()
+
 
 if(length(levels(neg_line_list$test_result)) != 3) stop(str_c(c("New test result category not accounted for.",levels(neg_line_list$test_result)), collapse = "\n"))
 
