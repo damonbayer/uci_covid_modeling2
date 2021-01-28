@@ -76,16 +76,16 @@ C <- inflation_factor * optimize(f = function(C) sum(extraDistr::ddirmnom(x = ta
 if (C == 100000 * inflation_factor) {
   warning("Maximum C reached")
 }
-rdirmnom(n = 2000, size = popsize, alpha = init_states / C) %>%
-  `colnames<-`(c("S", "E", "Ie", "Ip", "R", "D")) %>%
-  as_tibble() %>%
-  mutate(model = "posterior_old_model") %>%
-  bind_rows(mutate(as_tibble(target), model = "prior_new_model")) %>%
-  pivot_longer(-model) %>%
-  ggplot(aes(value, model)) +
-  facet_wrap(. ~ name, scales = "free_x") +
-  stat_halfeye(normalize = "xy") +
-  cowplot::theme_cowplot()
+# rdirmnom(n = 2000, size = popsize, alpha = init_states / C) %>%
+#   `colnames<-`(c("S", "E", "Ie", "Ip", "R", "D")) %>%
+#   as_tibble() %>%
+#   mutate(model = "posterior_old_model") %>%
+#   bind_rows(mutate(as_tibble(target), model = "prior_new_model")) %>%
+#   pivot_longer(-model) %>%
+#   ggplot(aes(value, model)) +
+#   facet_wrap(. ~ name, scales = "free_x") +
+#   stat_halfeye(normalize = "xy") +
+#   cowplot::theme_cowplot()
 
 strata <- NULL
 compartments <- c("S", "E", "Ie", "Ip", "R", "D")
