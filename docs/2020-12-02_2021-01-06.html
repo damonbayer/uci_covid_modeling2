@@ -332,6 +332,9 @@ $(document).ready(function () {
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
+      <a href="2020-12-23_2021-01-27.html">Dec 23 - Jan 27</a>
+    </li>
+    <li>
       <a href="2020-12-16_2021-01-20.html">Dec 16 - Jan 20</a>
     </li>
     <li>
@@ -339,9 +342,6 @@ $(document).ready(function () {
     </li>
     <li>
       <a href="2020-12-02_2021-01-06.html">Dec  2 - Jan  6</a>
-    </li>
-    <li>
-      <a href="2020-11-25_2020-12-30.html">Nov 25 - Dec 30</a>
     </li>
   </ul>
 </li>
@@ -402,7 +402,7 @@ $(document).ready(function () {
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2021-01-27
+<strong>Last updated:</strong> 2021-02-01
 </p>
 <p>
 <strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 0
@@ -493,16 +493,16 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomdamonbayerucicovidmodeling2tree8da4f62b577b4b77e6bd14bbfabfd969b4ceb07btargetblank8da4f62a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/damonbayer/uci_covid_modeling2/tree/8da4f62b577b4b77e6bd14bbfabfd969b4ceb07b" target="_blank">8da4f62</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomdamonbayerucicovidmodeling2tree8bc06d3dd1589ccb9b279ccc496c6f1dfe8002aatargetblank8bc06d3a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/damonbayer/uci_covid_modeling2/tree/8bc06d3dd1589ccb9b279ccc496c6f1dfe8002aa" target="_blank">8bc06d3</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomdamonbayerucicovidmodeling2tree8da4f62b577b4b77e6bd14bbfabfd969b4ceb07btargetblank8da4f62a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomdamonbayerucicovidmodeling2tree8bc06d3dd1589ccb9b279ccc496c6f1dfe8002aatargetblank8bc06d3a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
 </p>
 <p>
-The results in this page were generated with repository version <a href="https://github.com/damonbayer/uci_covid_modeling2/tree/8da4f62b577b4b77e6bd14bbfabfd969b4ceb07b" target="_blank">8da4f62</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+The results in this page were generated with repository version <a href="https://github.com/damonbayer/uci_covid_modeling2/tree/8bc06d3dd1589ccb9b279ccc496c6f1dfe8002aa" target="_blank">8bc06d3</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
 </p>
 <p>
 Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -526,19 +526,24 @@ Ignored files:
     Ignored:    data/from_OCHCA/
 
 Untracked files:
-    Untracked:  analysis/2020-12-09_2021-01-13.Rmd
+    Untracked:  analysis/2020-12-23_2021-01-27.Rmd
+    Untracked:  analysis/2020-12-23_2021-01-27_anaheim.Rmd
+    Untracked:  analysis/2020-12-23_2021-01-27_irvine.Rmd
+    Untracked:  analysis/2020-12-23_2021-01-27_santa-ana.Rmd
     Untracked:  code/Untitled.R
     Untracked:  code/fit_new_model_command_args.R
-    Untracked:  code/results/2020-12-02_2021-01-06/forecast_no_delay.rds
-    Untracked:  code/results/2020-12-02_2021-01-06/original_no_delay.rds
-    Untracked:  code/results/2020-12-09_2021-01-13/
+    Untracked:  code/results/2020-12-23_2021-01-27/
     Untracked:  explore_environments.R
     Untracked:  explore_reporting_delay.R
     Untracked:  tweets.R
 
 Unstaged changes:
     Modified:   analysis/_site.yml
-    Modified:   code/models/model_death_reporting_delay/fit_new_model.R
+    Modified:   code/process_ochca_data.R
+    Modified:   data/data_for_calcat.csv
+    Modified:   data/death_delay_ecdf.rds
+    Modified:   data/oc_city_data.csv
+    Modified:   data/oc_data.csv
 
 </code></pre>
 <p>
@@ -577,6 +582,23 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/damonbayer/uci_covid_modeling2/8bc06d3dd1589ccb9b279ccc496c6f1dfe8002aa/docs/2020-12-02_2021-01-06.html" target="_blank">8bc06d3</a>
+</td>
+<td>
+Damon Bayer
+</td>
+<td>
+2021-01-27
+</td>
+<td>
+Backfill 2020-01-18 Update
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -1055,7 +1077,7 @@ Damon Bayer
 <div id="summary-statements-are-made-assuming-95-credibility-levels" class="section level2">
 <h2>Summary (statements are made assuming 95% credibility levels)</h2>
 <ul>
-<li>The number of reported cases (196,885, shown as black bars in the top-middle plot above) underestimates the actual number of infections by a factor that ranges between 3.5 and 12.3. This means that we estimate that the total number of infections which occurred by January 06, 2021 is between 695,801 and 2,424,035. We estimate that the total number of infections will be between 846,788 and 2,752,620 on February 05, 2021.</li>
+<li>The number of reported cases (196,888, shown as black bars in the top-middle plot above) underestimates the actual number of infections by a factor that ranges between 3.5 and 12.3. This means that we estimate that the total number of infections which occurred by January 06, 2021 is between 695,801 and 2,424,035. We estimate that the total number of infections will be between 846,788 and 2,752,620 on February 05, 2021.</li>
 <li>Prevalence (number of infectious individuals at any time point) is decreasing and projected to be between 23,216 and 417,964 on February 05, 2021.</li>
 <li>Somewhere between 0.07% and 0.56% of all infections (not cases!) result in death.</li>
 <li>Basic reproductive number (<span class="math inline">\(R_0\)</span>), defined as the average number of secondary infections one infectious individual produces in a completely susceptible population, is estimated to be between 0.6 and 2.9.</li>
