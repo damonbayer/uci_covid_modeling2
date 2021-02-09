@@ -316,14 +316,19 @@ source("code/update_data_for_calcat.R")
 # City models
 # These also perform forecasts
 county_results_folder <- results_folder
-rm(list = ls()[ls() != "county_results_folder"])
+rm(list = ls()[!(ls() %in% c("county_results_folder", "first_day", "last_day"))])
 
 city_name <- "Santa Ana"
 source("code/models/model_death_reporting_delay/fit_city_from_folder.R")
+rm(list = ls()[!(ls() %in% c("county_results_folder", "first_day", "last_day"))])
+
 city_name <- "Anaheim"
 source("code/models/model_death_reporting_delay/fit_city_from_folder.R")
+rm(list = ls()[!(ls() %in% c("county_results_folder", "first_day", "last_day"))])
+
 city_name <- "Irvine"
 source("code/models/model_death_reporting_delay/fit_city_from_folder.R")
+rm(list = ls()[!(ls() %in% c("county_results_folder", "first_day", "last_day"))])
 
 # Cleanup -----------------------------------------------------------------
 file_delete(dir_ls()[str_starts(dir_ls(), "ODE_inference_status_")])

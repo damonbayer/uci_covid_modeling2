@@ -2,8 +2,8 @@ library(tidyverse)
 library(lubridate)
 library(here)
 
-line_list_path = "data/from_OCHCA/2.1.21 release to UCI team.csv"
-negative_line_list_path <- "data/from_OCHCA/All PCR tests updated 2.1.21.csv"
+line_list_path = "data/from_OCHCA/2.8.21 release to UCI team.csv"
+negative_line_list_path <- "data/from_OCHCA/All PCR tests updated 2.8.21.csv"
 
 metadata_zip <- tibble(
   zip = c(
@@ -123,7 +123,7 @@ neg_line_list_filtered <- left_join(neg_line_list, first_pos) %>%
 
 oc_data <- neg_line_list_filtered %>%
   count(date, test_result) %>%
-  pivot_wider(names_from = test_result, values_from = n) %>%
+  pivot_wider(names_from = test_result, values_from = n, values_fill = 0) %>%
   full_join(deaths_tbl_county) %>%
   replace(is.na(.), 0) %>%
   mutate(cases = positive, tests = negative + positive + other) %>%
@@ -191,4 +191,4 @@ write_csv(oc_city_incid, "data/oc_city_incidence.csv")
 
 # Create ECDF -------------------------------------------------------------
 death_delay_ecdf <- ecdf(as.numeric(deaths_tbl$Date.death.posted - deaths_tbl$DtDeath))
-write_rds(death_delay_ecdf, path = "data/death_delay_ecdf.rds")
+write_rds(death_delay_ecdf, file = "data/death_delay_ecdf.rds")

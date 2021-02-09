@@ -1,3 +1,4 @@
+print(city_name)
 library(tidyverse)
 library(lubridate)
 library(stemr)
@@ -7,58 +8,88 @@ library(foreach)
 library(doRNG)
 library(doParallel)
 registerDoParallel(cores = future::availableCores())
+
+city_folder_name <- city_name %>% str_replace_all(" ", "-") %>% str_to_lower()
+
 source('code/helper_functions.R')
 source("code/stemr_functions.R")
 source('code/forecast.R')
 death_delay_ecdf <- read_rds("data/death_delay_ecdf.rds")
+inflation_factor <- 5
 
-time_interval_in_days <- 3
-
-
-first_day <- county_results_folder %>% path_file() %>% str_sub(end = 10)
-last_day <- county_results_folder %>% path_file() %>% str_sub(start = 12)
-
-county_multi_chain_stem_fit <- read_rds(path(county_results_folder, "original", ext = "rds"))
 
 city_incid <- read_csv("data/oc_city_incidence.csv") %>%
   filter(city == city_name)
 
-city_data <- read_csv("data/oc_city_data.csv") %>%
-  filter(city == city_name)
-
-county_popsize <- county_multi_chain_stem_fit$stem_fit_list[[1]]$dynamics$popsize
-county_initdist <- county_multi_chain_stem_fit$stem_fit_list[[1]]$dynamics$initdist_params
-county_initprior <- county_multi_chain_stem_fit$stem_fit_list[[1]]$dynamics$initdist_priors
-county_C <- county_popsize / sum(county_initprior)
-
-city_popsize <- city_incid$population
-
-city_initidist <-
-  c(S_0 = city_popsize - sum(county_initdist[-1] * city_incid$prop_incid),
-    county_initdist[-1] * city_incid$prop_incid) %>%
-  `names<-`(., str_sub(names(.), end = -3))
-
-target_raw <- rdirmnom(n = 8000, size = county_popsize, alpha = county_initprior)
-target <- cbind(city_popsize - rowSums(round(target_raw[,-1] * city_incid$prop_incid)),
-                round(target_raw[,-1] * city_incid$prop_incid)) %>%
-  `colnames<-`(names(city_initidist))
+popsize <- city_incid$population
+log_popsize <- log(popsize)
 
 
-city_C <- optimize(f = function(C) sum(extraDistr::ddirmnom(x = target, size = city_popsize, alpha = city_initidist / C, log = T)), lower = 1, upper = 100000, maximum = T)$maximum
+prev_models <- tibble(path = dir_ls("code/results", recurse = T)) %>%
+  filter(path_file(path) == city_folder_name) %>%
+  mutate(path = path_join(map(path_split(path), ~head(., -1)))) %>%
+  mutate(folder = path_file(path)) %>%
+  separate(folder, c("start_date", "end_date"), sep = "_") %>%
+  mutate(across(ends_with("date"), ymd)) %>%
+  arrange(end_date)
 
+time_interval_in_days <- 3
+oc_city_data <- read_csv("data/oc_city_data.csv")
 
-dat <- city_data %>%
+dat <- oc_city_data %>%
+  filter(city == city_name) %>%
   lump_oc_data(time_interval_in_days,
                first_day,
                last_day) %>%
-  mutate(prop_deaths_reported = death_delay_ecdf(as.numeric(max(city_data$date) - end_date)))
+  mutate(prop_deaths_reported = death_delay_ecdf(as.numeric(max(oc_city_data$date) - end_date)))
 
-init_states <- city_initidist
-C <- city_C
-popsize <- city_popsize
 
-# -------------------------------------------------------------------------
+# Use oldest model that includes our start date as the previous model
+prior_model <-
+  prev_models %>%
+  filter(first_day >= start_date,
+         first_day <= end_date) %>%
+  arrange(start_date) %>%
+  head(1)
 
+prior_model_fit <- read_rds(path(prior_model$path, city_folder_name, "original", ext = "rds"))
+
+# Get epi curves from newest model
+prior_model_epi_curves <- extract_epi_curves(prior_model_fit)
+
+# Find the time in the newest model that is closest to the start time of the current model
+target_time <- select(prior_model_fit$data, time, end_date) %>%
+  mutate(dist_from_first_day = abs(as.numeric(first_day - end_date))) %>%
+  filter(dist_from_first_day == min(dist_from_first_day)) %>%
+  pull(time)
+
+# Pull the posterior compartment counts from the newest model at this time
+target <- prior_model_epi_curves %>%
+  filter(time == target_time) %>%
+  select(-time, -starts_with(".")) %>%
+  round() %>%
+  # stick extras in S if rounding messes things up
+  mutate(S = popsize - (E + Ie + Ip + R + D)) %>%
+  as.matrix()
+
+# Average the compartment count and stick extras in S if rounding messes things up
+init_states <- c(S = popsize - sum(round(colMeans(target[,-1]))), round(colMeans(target[,-1])))
+# Find MLE for C
+C <- inflation_factor * optimize(f = function(C) sum(extraDistr::ddirmnom(x = target, size = popsize, alpha = init_states / C, log = T)), lower = 1, upper = 100000, maximum = T)$maximum
+if (C == 100000 * inflation_factor) {
+  warning("Maximum C reached")
+}
+
+# rdirmnom(n = 2000, size = popsize, alpha = init_states / C) %>%
+#   `colnames<-`(c("S", "E", "Ie", "Ip", "R", "D")) %>%
+#   as_tibble() %>%
+#   mutate(model = "posterior_old_model") %>%
+#   bind_rows(mutate(as_tibble(target), model = "prior_new_model")) %>%
+#   pivot_longer(-model) %>%
+#   ggplot(aes(value, model)) +
+#   facet_wrap(. ~ name, scales = "free_x") +
+#   tidybayes::stat_halfeye(normalize = "xy") +
+#   cowplot::theme_cowplot()
 
 strata <- NULL
 compartments <- c("S", "E", "Ie", "Ip", "R", "D")
@@ -263,6 +294,7 @@ stem_fit_list <- foreach(chain = 1:n_chains,
                                     print_progress = 1e3)
                          }
 
+
 multi_chain_stem_fit <- list()
 multi_chain_stem_fit$data <- dat
 multi_chain_stem_fit$stem_fit_list <- stem_fit_list
@@ -270,9 +302,7 @@ multi_chain_stem_fit$n_iterations <- 2000
 multi_chain_stem_fit$n_chains <- n_chains
 multi_chain_stem_fit$thinning_interval <- thinning_interval
 
-city_folder <- path(county_results_folder, str_replace_all(str_to_lower(city_name), "\\s", "-"))
-dir_create(city_folder)
-
-write_rds(multi_chain_stem_fit, path(city_folder, "original", ext = "rds"))
-
-forecast_from_folder(results_folder = city_folder)
+results_folder <- path("code", "results", str_c(head(dat$start_date, 1), "_", tail(dat$end_date, 1)), city_folder_name)
+dir_create(results_folder)
+write_rds(multi_chain_stem_fit, path(results_folder, "original", ext = "rds"))
+forecast_from_folder(results_folder)
