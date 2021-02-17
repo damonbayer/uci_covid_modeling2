@@ -1,4 +1,3 @@
-library(workflowr)
 library(tidyverse)
 library(lubridate)
 library(fs)
@@ -78,7 +77,7 @@ rmd_tbl <-
          ext = "Rmd"))
 
 # Write Rmd's
-invisible(map2(rmd_tbl$rmd, rmd_tbl$rmd_path, ~write_lines(x = .x, file = .y)))
+invisible(map2(rmd_tbl$rmd, rmd_tbl$rmd_path, ~write_lines(x = .x, path = .y)))
 
 # YML ---------------------------------------------------------------------
 site_yml_old <- read_lines("analysis/_site.yml")
