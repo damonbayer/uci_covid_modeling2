@@ -27,8 +27,8 @@ newest_model <- tail(prev_models, 1)
 
 time_interval_in_days <- 3
 
-first_day <- newest_model$start_date + 7
-last_day <- newest_model$end_date + 7
+first_day <- newest_model$start_date + 14
+last_day <- newest_model$end_date + 14
 
 message("Did you remember to update the data?\ncode/process_ochca_data.R")
 
@@ -40,6 +40,15 @@ dat <- oc_data %>%
                last_day) %>%
   mutate(prop_deaths_reported = death_delay_ecdf(as.numeric(max(oc_data$date) - end_date)))
 
+# Plot data
+dat %>%
+  mutate(pos = cases / tests) %>%
+  select(date = end_date, cases, tests, deaths, pos) %>%
+  pivot_longer(-date) %>%
+  ggplot(aes(date, value)) +
+  facet_wrap(. ~ name, scales = "free_y") +
+  geom_line() +
+  geom_point()
 
 # Use oldest model that includes our start date as the previous model
 prior_model <-

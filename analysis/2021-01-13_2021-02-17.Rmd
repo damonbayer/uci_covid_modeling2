@@ -1,0 +1,395 @@
+---
+title: "Orange County, CA COVID Situation Report Jan 13, 2021 - Feb 17, 2021"
+site: workflowr::wflow_site
+output:
+  workflowr::wflow_html:
+    toc: false
+editor_options:
+  chunk_output_type: console
+---
+```{r setup, include=FALSE}
+results_folder <- "code/results/2021-01-13_2021-02-17"
+city_name <- NA
+location_name <- "Orange County"
+
+knitr::opts_chunk$set(echo = F, fig.align = "center", fig.width=16,  message=F)
+
+knitr::opts_chunk$set(autodep = TRUE)
+library(lubridate)
+library(fs)
+library(tidyverse)
+library(tidybayes)
+library(scales)
+library(glue)
+library(stemr)
+library(cowplot)
+library(coda)
+library(patchwork)
+theme_set(theme_bw(base_size = 22)) 
+source("code/stemr_functions.R")
+
+last_folder_name <- path_file(results_folder) #this will just get set to the yyyy-mm-dd_yyyy-mm-dd if there is no city
+folder_regex <- "[:digit:]{4}-[:digit:]{2}-[:digit:]{2}_[:digit:]{4}-[:digit:]{2}-[:digit:]{2}"
+
+
+first_day <- ymd(str_sub(results_folder, start = 14, end = 23))
+last_day <- ymd(str_sub(results_folder, start = 25, end = 34))
+
+multi_chain_stem_fit <- read_rds(path(results_folder, "original", ext = "rds"))
+popsize <- multi_chain_stem_fit$stem_fit_list[[1]]$dynamics$popsize
+forecast_obj <- read_rds(path(results_folder, "forecast", ext = "rds"))
+
+last_forecast_day <- tail(forecast_obj$data$end_date, 1)
+
+oc_data <-
+  if (is.na(city_name)) {
+    read_csv("data/oc_data.csv")
+  } else {
+      read_csv("data/oc_city_data.csv") %>%
+      filter(city == city_name) %>%
+      select(-city)
+  }
+
+ci_width <- c(0.5, 0.8, 0.95)
+ci_width_string <- str_c(percent(ci_width), collapse = ", ")
+
+prev_models <-
+  tibble(path = dir_ls("code/results", recurse = T)) %>% 
+  mutate(last_path = path_file(path)) %>% 
+  {if (is.na(city_name)) filter(., str_detect(last_path, folder_regex)) else filter(., last_path == last_folder_name)} %>% 
+  mutate(folder = str_extract(path, pattern = "[:digit:]{4}-[:digit:]{2}-[:digit:]{2}_[:digit:]{4}-[:digit:]{2}-[:digit:]{2}")) %>%
+  separate(folder, c("start_date", "end_date"), sep = "_") %>%
+  mutate(across(ends_with("date"), ymd)) %>% 
+  filter(end_date <= last_day) %>% 
+  mutate(multi_chain_stem_fit = map(path(path, "original", ext = "rds"), read_rds),
+         forecast_obj = map(path(path, "forecast", ext = "rds"), read_rds))
+```
+
+## Orange County, CA COVID-19 Situation Report, `r format(last_day + 5, "%B %e, %Y")`
+#### Report period: `r format(first_day, "%b %d")` - `r format(last_day, "%b %d")` (we don't use the most recent data due to reporting delays)
+
+The goal of this report is to inform interested parties about dynamics of SARS-CoV-2 spread in Orange County, CA and to predict epidemic trajectories. 
+Methodological details are provided below and in the accompanying [manuscript](https://arxiv.org/abs/2009.02654). We are also contributing to [COVID Trends by UC Irvine](https://www.stat.uci.edu/covid19/index.html) project that provides data visualizations of California County trends across time and space. 
+
+```{r D_I_P plot}
+i_p_paths <- 
+  forecast_obj$forecast_results %>%
+  select(starts_with("."), natural_paths) %>%
+  mutate(natural_paths = map(natural_paths, as_tibble)) %>%
+  unnest(natural_paths) %>%
+  select(-starts_with(".")) %>% 
+  mutate(incidence = popsize - S,
+         prevalence = E + Ie + Ip) %>% 
+  select(time, incidence, prevalence) %>% 
+  pivot_longer(-time) %>%
+  group_by(time, name) %>%
+  median_qi(.width = ci_width) %>% 
+  left_join(select(forecast_obj$data, time, date = end_date)) %>% 
+  ungroup() %>% 
+  select(date, everything(), -time)
+
+deaths_at_t0 <- sum(oc_data[oc_data$date <= first_day, "deaths"])
+cases_at_t0 <- sum(oc_data[oc_data$date <= first_day, "cases"])
+
+d_paths <- forecast_obj$forecast_results %>% 
+  select(starts_with("."), datasets) %>% 
+  mutate(datasets = map(datasets, as_tibble)) %>% 
+  unnest(datasets) %>% 
+  group_by(.draw) %>% 
+  mutate(cumulative_deaths = cumsum(deaths) + deaths_at_t0) %>% 
+  select(time, cumulative_deaths) %>% 
+  group_by(time) %>% 
+  median_qi(.width = ci_width) %>% 
+  left_join(select(forecast_obj$data, time, date = end_date)) %>% 
+  select(-time) %>% 
+  pivot_longer(cumulative_deaths)
+
+d_i_p_paths <- bind_rows(i_p_paths, d_paths)
+
+d_i_p_data <- 
+  multi_chain_stem_fit$data %>% 
+  mutate(cumulative_deaths = deaths_at_t0 + cumsum(deaths),
+         incidence = cases_at_t0 + cumsum(cases)) %>% 
+  select(date = end_date, cumulative_deaths, incidence) %>% 
+  filter(date %in% unique(d_i_p_paths$date) & date <= last_day) %>% 
+  pivot_longer(-date)
+
+ggplot(mapping = aes(date, value)) +
+  facet_wrap(. ~ name, scales = "free_y", strip.position = "left", labeller = labeller(name = c("cumulative_deaths" = "Cumulative Deaths", "incidence" = "Cumulative Incidence", "prevalence" = "Prevalence"))) +
+  geom_lineribbon(
+    data = d_i_p_paths,
+    mapping = aes(ymin = .lower, ymax = .upper), size = 1.5,
+    color = "steelblue4"
+  ) +
+  geom_col(
+    data = filter(d_i_p_data, name == "incidence"),
+    fill = "black"
+  ) +
+  geom_line(data = filter(d_i_p_data, name == "cumulative_deaths")) +
+  geom_point(data = filter(d_i_p_data, name == "cumulative_deaths")) +
+  ggtitle(glue("Latent & observed trajectories, posterior median & {ci_width_string} credible intervals")) +
+  scale_fill_brewer(name = "Credibility level", labels = str_c(percent(rev(ci_width))), guide = guide_legend(title.position = "top", direction = "horizontal")) +
+  scale_y_continuous(name = NULL, labels = comma) +
+  scale_x_date(name = "Date", breaks = c("2 week"), date_labels = "%b\n%e") +
+  theme(
+    strip.background = element_blank(),
+    strip.placement = "outside",
+    strip.text = element_text(size = 22),
+    legend.position = c(0.1, 0.9), legend.title = element_text(size = 15.5), legend.text = element_text(size = 15.5), legend.background = element_rect(fill = "transparent")
+  )
+```
+
+```{r IFR R0 Plot}
+ifr_R0_samples <-
+  prev_models %>% 
+  mutate(model_number = rev(row_number())) %>% 
+  group_by(month = month(start_date)) %>%
+  mutate(model_within_month = row_number()) %>% 
+  ungroup() %>% 
+  # filter((model_number %in% 1:3) | model_within_month == 1) %>% # Show last 3 models + 1 from each prior month
+  mutate(parameter_samples_human = map(multi_chain_stem_fit, ~extract_stem_parameter_posterior(., transform = to_human_scale))) %>% 
+  mutate(parameter_samples_human = map(parameter_samples_human, tidy_draws)) %>% 
+  select(ends_with("date"), parameter_samples_human) %>% 
+  unnest(parameter_samples_human) %>% 
+  select(ends_with("date"), starts_with("."), R0, ifr) %>% 
+  mutate(label = fct_inorder(glue("{format(start_date, '%b %e')} - {format(end_date, '%b %e')}")))
+
+# ifr_R0_samples %>%
+#   ggplot(aes(label, ifr)) +
+#   stat_eye(.width = ci_width, fill="lightskyblue1", slab_color ="lightskyblue4", color="dodgerblue4", slab_size = 0.5) +
+#   ggtitle("Historical Estimates of Infection-to-Fatality Ratio (IFR)") +
+#   scale_y_continuous(name = "IFR", label = percent) +
+#   xlab("Model Fit Period")
+# 
+# ifr_R0_samples %>%
+#   ggplot(aes(label, R0)) +
+#   stat_eye(.width = ci_width) +
+#   stat_eye(.width = ci_width, fill="lightskyblue1", slab_color ="lightskyblue4", color="dodgerblue4", slab_size = 0.5) +
+#   geom_hline(yintercept = 1, linetype = "dashed") +
+#   ggtitle(expression(paste('Historical estimates of the basic reproductive number (', R[0], ')'))) +
+#   scale_y_continuous(name = expression(R[0])) +
+#   xlab("Model Fit Period")
+
+# ifr_R0_intervals <-
+#   ifr_R0_samples %>% 
+#   select(date = end_date, R0, ifr) %>% 
+#   pivot_longer(-date) %>% 
+#   group_by(date, name) %>% 
+#   median_qi(.width = ci_width)
+
+# Create piecewise constant
+ifr_R0_intervals <- 
+  ifr_R0_samples %>% 
+  select(start_date, end_date, R0, ifr) %>% 
+  pivot_longer(-c(start_date, end_date)) %>% 
+  group_by(start_date, end_date, name) %>% 
+  median_qi(.width = ci_width) %>% 
+  group_by(.width, name) %>% 
+  mutate(end_date = lead(start_date, default = max(end_date)) - 1) %>% 
+  ungroup() %>% 
+  pivot_longer(ends_with("date"), names_to = "date_type", values_to = "date") %>% 
+  select(date, everything(), -date_type) %>% 
+  arrange(date)
+
+ifr_R0_intervals %>% 
+  filter(name == "ifr") %>% 
+  ggplot(aes(date, value, ymin = .lower, ymax = .upper)) +
+  geom_lineribbon(color = "steelblue4") +
+  ggtitle("Historical estimates of infection-to-fatality ratio (IFR)") +
+  scale_fill_brewer(name = "Credibility level", labels = str_c(percent(rev(ci_width))), guide = guide_legend(title.position = "top", direction = "horizontal")) +
+  scale_y_continuous(name = "IFR", limits = c(0, NA), label = percent) +
+  scale_x_date(name = "Date", date_breaks = "1 month", date_labels = "%b", limits = as_date(c(NA, last_forecast_day))) +
+  theme(legend.position = c(0.8, 0.8), legend.title = element_text(size = 15.5), legend.text = element_text(size = 15.5), legend.background = element_rect(fill = "transparent"))
+
+ifr_R0_intervals %>% 
+  filter(name == "R0") %>% 
+  ggplot(aes(date, value, ymin = .lower, ymax = .upper)) +
+  geom_lineribbon(color = "steelblue4") +
+  geom_hline(yintercept = 1, linetype = "dashed") +
+  ggtitle(expression(paste('Historical estimates of the basic reproductive number (', R[0], ')'))) +
+  scale_fill_brewer(name = "Credibility level", labels = str_c(percent(rev(ci_width))), guide = guide_legend(title.position = "top", direction = "horizontal")) +
+  scale_y_continuous(name = expression(R[0]), limits = c(0, NA)) +
+  scale_x_date(name = "Date", date_breaks = "1 month", date_labels = "%b", limits = as_date(c(NA, last_forecast_day))) +
+  theme(legend.position = c(0.2, 0.8), legend.title = element_text(size = 15.5), legend.text = element_text(size = 15.5), legend.background = element_rect(fill = "transparent"))
+```
+
+```{r Reff Plot}
+Reff_intervals <- 
+  prev_models %>% 
+  mutate(forecast_results = map(forecast_obj, "forecast_results")) %>% 
+  select(start_date, end_date, forecast_results) %>% 
+  unnest(forecast_results) %>% 
+  select(-paths, -datasets) %>% 
+  mutate(natural_paths = map(natural_paths, ~as_tibble(.[,1:2]))) %>% 
+  unnest(natural_paths) %>% 
+  mutate(prop_S = S / popsize) %>% 
+  select(-S) %>% 
+  left_join(select(ifr_R0_samples, start_date, end_date, starts_with("."), R0)) %>% 
+  mutate(Reff = R0 * prop_S) %>% 
+  select(ends_with("date"), time, Reff) %>% 
+  group_by(start_date, end_date, time) %>% 
+  median_qi(.width = ci_width) %>% 
+  ungroup() %>% 
+  left_join(prev_models %>% 
+              mutate(time_date_conversion = forecast_obj %>% map("data") %>% map(~select(., time, date = end_date))) %>% 
+              mutate(next_start_date = lead(start_date, default = ymd("9999-12-31"))) %>%
+              select(contains("date")) %>% 
+              unnest(time_date_conversion)) %>% 
+  drop_na() %>% 
+  filter(date < next_start_date) %>% 
+  select(date, Reff, starts_with("."))
+
+Reff_intervals %>% 
+  drop_na() %>% 
+  ggplot(aes(date, Reff, ymin = .lower, ymax = .upper)) +
+  geom_lineribbon(color = "steelblue4") +
+  geom_hline(yintercept = 1, linetype = "dashed") +
+  scale_fill_brewer(name = "Credibility level", labels = str_c(percent(rev(ci_width))), guide = guide_legend(title.position = "top", direction = "horizontal")) +
+  ggtitle(expression(paste('Historical estimates of the effective reproductive number (', R[e], ')'))) +
+  scale_y_continuous(name = expression(R[e]), limits = c(0, NA)) +
+  scale_x_date(name = "Date", date_breaks = "1 month", date_labels = "%b") +
+  theme(legend.position = c(0.2, 0.8), legend.title = element_text(size = 15.5), legend.text = element_text(size = 15.5), legend.background = element_rect(fill = "transparent"))
+```
+
+```{r summary prep}
+reported_cases <- filter(d_i_p_data, name == "incidence", date == max(date))$value
+reported_cases_lower_est <- filter(d_i_p_paths, name == "incidence", date == max(d_i_p_data$date), .width == 0.95)$.lower
+reported_cases_upper_est <- filter(d_i_p_paths, name == "incidence", date == max(d_i_p_data$date), .width == 0.95)$.upper
+
+future_cases_lower_est <- filter(d_i_p_paths, name == "incidence", date == max(date), .width == 0.95)$.lower
+future_cases_upper_est <- filter(d_i_p_paths, name == "incidence", date == max(date), .width == 0.95)$.upper
+
+prevalence_direction <- ifelse(filter(d_i_p_paths, name == "prevalence", date == min(date))$value[1] > filter(d_i_p_paths, name == "prevalence", date == max(date))$value[1], "decreasing", "increasing")
+
+future_prevalence_lower_est <- filter(d_i_p_paths, name == "prevalence", date == max(date), .width == 0.95)$.lower
+future_prevalence_upper_est <- filter(d_i_p_paths, name == "prevalence", date == max(date), .width == 0.95)$.upper
+
+ifr_est <- ifr_R0_samples %>% filter(end_date == max(end_date)) %>% pull(ifr) %>% quantile(c(0.025, 0.975))
+R0_est <- ifr_R0_samples %>% filter(end_date == max(end_date)) %>% pull(R0) %>% quantile(c(0.025, 0.975))
+Reff_est <- Reff_intervals %>% drop_na() %>% filter(date == last_day + 9, .width == 0.95) %>% select(".lower", ".upper") %>% pivot_longer(everything()) %>% deframe()
+```
+
+
+## Summary (statements are made assuming 95% credibility levels)
+- The number of reported cases (`r comma(reported_cases)`, shown as black bars in the top-middle plot above) underestimates the actual number of infections by a factor that ranges between `r round(reported_cases_lower_est / reported_cases, 1)` and `r round(reported_cases_upper_est / reported_cases, 1)`. 
+This means that we estimate that the total number of infections which occurred by `r format(last_day,'%B %d, %Y')` is between `r comma(round(reported_cases_lower_est))` and `r comma(round(reported_cases_upper_est))`.
+We estimate that the total number of infections will be between  `r comma(round(future_cases_lower_est))` and `r comma(round(future_cases_upper_est))` on `r format(last_forecast_day,'%B %d, %Y')`.
+- Prevalence (number of infectious individuals at any time point) is `r prevalence_direction` and projected to be between `r comma(round(future_prevalence_lower_est))` and `r comma(round(future_prevalence_upper_est))` on `r format(last_forecast_day,'%B %d, %Y')`.
+- Somewhere between `r percent(ifr_est[["2.5%"]], accuracy = 0.01)` and `r percent(ifr_est[["97.5%"]], accuracy = 0.01)` of all infections (not cases!) result in death.
+- Basic reproductive number ($R_0$), defined as the average number of secondary infections one infectious individual produces in a completely susceptible population, is estimated to be between `r round(R0_est[["2.5%"]], 1)` and `r round(R0_est[["97.5%"]], 1)`.
+- Effective reproductive number ($R_e$), defined as its basic counterpart above, but allowing for some fraction of the population to be removed (recovered or deceased), is estimated to be between `r round(Reff_est[[".lower"]], 1)` and `r round(Reff_est[[".upper"]], 1)` on `r format(last_day + 9,'%B %d, %Y')`. **We want to keep $R_e < 1$ in order to control virus transmission**.
+
+Note: We previously created a report using a similar model with a different implementation. Archives of the old report can be found [here](https://vnminin.github.io/uci_covid_modeling/).
+
+<hr style="height:3px;border-width:0;color:gray;background-color:gray">
+
+## Abbreviated technical details (optional)
+
+Our approach is based on fitting a mechanistic model of SARS-CoV-2 spread to multiple sources of surveillance data. 
+A more fleshed out method description is in the [manuscript](https://arxiv.org/abs/2009.02654). 
+
+### Model inputs
+Our method takes three time series as input: daily new tests, case counts, and deaths. However, we find daily resolution to be too noisy due to delay in testing reports, weekend effect, etc. So we aggregated/binned the three types of counts in 3 day intervals. These aggregated time series are shown below.
+
+```{r model-inputs, fig.height=8, fig.width=12}
+ggplot(multi_chain_stem_fit$data, aes(end_date, tests)) +
+  geom_line() + 
+  geom_point() +
+  scale_y_continuous(name = "Tests", labels = comma) +
+  scale_x_date(name = "Date", breaks = c("10 day"), date_labels = "%b %d") +
+  ggplot(multi_chain_stem_fit$data, aes(end_date, cases)) +
+  geom_line() + 
+  geom_point() +
+  scale_y_continuous(name = "Cases", labels = comma) +
+  scale_x_date(name = "Date", breaks = c("10 day"), date_labels = "%b %d") +
+  ggplot(multi_chain_stem_fit$data, aes(end_date, deaths)) +
+  geom_line() + 
+  geom_point() +
+  scale_y_continuous(name = "Deaths", labels = comma) +
+  scale_x_date(name = "Date", breaks = c("10 day"), date_labels = "%b %d") +
+  {
+    if ("prop_deaths_reported" %in% colnames(multi_chain_stem_fit$data)) {
+    ggplot(multi_chain_stem_fit$data, aes(end_date, prop_deaths_reported)) +
+      geom_line() +
+      geom_point() +
+      scale_y_continuous(name = "Probability Death Reported",
+                         labels = percent,
+                         limits = c(0,1))
+    } else NULL } +
+  patchwork::plot_layout(ncol = 2, nrow = 2, ) +
+  patchwork::plot_annotation(title = str_c(location_name, ", CA data"),
+                             subtitle = "Counts binned into 3 day periods")
+```
+
+### Model structure
+We assume that all individuals in Orange County, CA can be split into 6 compartments: S = susceptible individuals, E = infected, but not yet infectious individuals, $\text{I}_\text{e}$ = individuals at early stages of infection, $\text{I}_\text{p}$ = individuals at progressed stages of infection (assumed 20% less infectious than individuals at the early infection stage), R = recovered individuals, D = individuals who died due to COVID-19. Possible progressions of an individual through the above compartments are depicted in the diagram below.  
+
+
+```{r Model Structure, out.width = "60%"}
+knitr::include_graphics("assets/model_figure.svg", error=FALSE)
+```
+
+Mathematically, we assume that dynamics of the proportions of individuals in each compartment follow a set of ordinary differential equations corresponding to the above diagram. These equations are controlled by the following parameters: 
+
+- Basic reproductive number ($R_0$)
+- mean duration of the latent period
+- mean duration of the early infection period
+- mean duration of the progressed infection period
+- probability of transitioning from progressed infection to death, rather than to recovery (i.e., IFR)
+
+We fit this model to data by assuming that case counts are noisy realizations of the actual number of individuals progressing from $\text{I}_\text{e}$ compartment to $\text{I}_\text{p}$ compartment. 
+Similarly we assume that observed deaths are noisy realizations of the actual number of individuals progressing from $\text{I}_\text{p}$ compartment to $\text{D}$ compartment. 
+*A priori*, we assume that death counts are significantly less noisy than case counts.
+We use a Bayesian estimation framework, which means that all estimated quantities receive credible intervals (e.g., 80% or 95% credible intervals). 
+Width of these credible intervals encode the amount of uncertainty that we have in the estimated quantities. 
+
+
+### Posterior Predictive Plots
+```{r Posterior Predictive}
+cases_deaths_pp <- 
+  forecast_obj$forecast_results$datasets %>%
+  map_dfr(as_tibble) %>% 
+  pivot_longer(-time) %>% 
+  group_by(time, name) %>% 
+  median_qi(.width = ci_width) %>% 
+  left_join(select(forecast_obj$data, time, date = end_date, tests)) %>% 
+  ungroup() %>% 
+  select(-time) %>% 
+  named_group_split(name)
+
+deaths_pp_plot <- 
+  ggplot() +
+  geom_lineribbon(data = cases_deaths_pp$deaths,
+                  mapping = aes(date, value, ymin = .lower, ymax = .upper)) +
+  geom_point(data = drop_na(filter(forecast_obj$data, end_date <= last_day)),
+             mapping = aes(end_date, deaths)) +
+  scale_fill_brewer(name = "Credibility level", labels = str_c(percent(rev(ci_width))), guide = guide_legend(title.position = "top", direction = "horizontal")) +
+  scale_y_continuous(name = "Deaths", labels = comma) +
+  scale_x_date(name = "Date", breaks = c("2 week"), date_labels = "%b\n%e") +
+  theme(
+    strip.background = element_blank(),
+    strip.placement = "outside",
+    strip.text = element_text(size = 22),
+    legend.position = c(0.3, 0.85), legend.title = element_text(size = 15.5), legend.text = element_text(size = 15.5), legend.background = element_rect(fill = "transparent")
+  )
+
+positivity_pp_plot <- 
+  ggplot() +
+  geom_lineribbon(data = mutate(cases_deaths_pp$cases, across(c(value, .lower, .upper), ~`/`(., tests))),
+                  mapping = aes(date, value, ymin = .lower, ymax = .upper, )) +
+  geom_point(data = drop_na(filter(forecast_obj$data, end_date <= last_day)),
+             mapping = aes(end_date, cases / tests)) +
+  scale_fill_brewer(name = "Credibility level", labels = str_c(percent(rev(ci_width))), guide = guide_legend(title.position = "top", direction = "horizontal")) +
+  scale_y_continuous(name = "Positivity", labels = percent) +
+  scale_x_date(name = "Date", breaks = c("2 week"), date_labels = "%b\n%e") +
+  theme(
+    strip.background = element_blank(),
+    strip.placement = "outside",
+    strip.text = element_text(size = 22),
+    legend.position = "none", legend.title = element_text(size = 15.5), legend.text = element_text(size = 15.5), legend.background = element_rect(fill = "transparent")
+  )
+
+deaths_pp_plot + positivity_pp_plot +   
+  plot_annotation(title = 'Observed & Predicted Deaths and Positive Test Percent in 3 Day Periods', theme=theme(plot.title = element_text(hjust = 0.2)))
+```
+
