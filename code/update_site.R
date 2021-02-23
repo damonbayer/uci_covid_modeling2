@@ -129,4 +129,4 @@ rmd_tbl %>%
   map2(.x = .$html_path, .y = .$html_dest, .f = ~file_copy(path = .x, new_path = .y, overwrite = T))
 
 # View Site ---------------------------------------------------------------
-wflow_view()
+workflowr::wflow_view()

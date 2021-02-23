@@ -27,8 +27,8 @@ newest_model <- tail(prev_models, 1)
 
 time_interval_in_days <- 3
 
-first_day <- newest_model$start_date + 14
-last_day <- newest_model$end_date + 14
+first_day <- newest_model$start_date + 7
+last_day <- newest_model$end_date + 7
 
 message("Did you remember to update the data?\ncode/process_ochca_data.R")
 
