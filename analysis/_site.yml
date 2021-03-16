@@ -18,14 +18,14 @@ navbar:
   - text: Archived Reports
     icon: fas fa-archive
     menu:
+      - text: "Feb  3 - Mar 10"
+        href: 2021-02-03_2021-03-10.html
+      - text: "Jan 27 - Mar  3"
+        href: 2021-01-27_2021-03-03.html
       - text: "Jan 20 - Feb 24"
         href: 2021-01-20_2021-02-24.html
       - text: "Jan 13 - Feb 17"
         href: 2021-01-13_2021-02-17.html
-      - text: "Jan  6 - Feb 10"
-        href: 2021-01-06_2021-02-10.html
-      - text: "Dec 30 - Feb  3"
-        href: 2020-12-30_2021-02-03.html
   - text: About
     icon: fas fa-users
     href: about.html

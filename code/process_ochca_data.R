@@ -2,8 +2,8 @@ library(tidyverse)
 library(lubridate)
 library(here)
 
-line_list_path = "data/from_OCHCA/3.1.21 release to UCI team.csv"
-negative_line_list_path <- "data/from_OCHCA/All PCR tests updated 3.1.21.csv"
+line_list_path = "data/from_OCHCA/3.15.21 release to UCI team.csv"
+negative_line_list_path <- "data/from_OCHCA/All PCR tests updated 3.15.21.csv"
 
 metadata_zip <- tibble(
   zip = c(
@@ -181,6 +181,25 @@ oc_city_incid <-
   arrange(city) %>%
   select(-pop_incid)
 
+# Create ECDF -------------------------------------------------------------
+death_delay_ecdf <- ecdf(as.numeric(deaths_tbl$Date.death.posted - deaths_tbl$DtDeath))
+
+# Plot Data ---------------------------------------------------------------
+source('code/helper_functions.R')
+dat <- oc_data %>%
+  lump_oc_data(time_interval_in_days = 7) %>%
+  mutate(prop_deaths_reported = death_delay_ecdf(as.numeric(max(oc_data$date) - end_date)))
+
+# Plot data
+dat %>%
+  mutate(pos = cases / tests) %>%
+  select(date = end_date, cases, tests, deaths, pos) %>%
+  pivot_longer(-date) %>%
+  ggplot(aes(date, value)) +
+  facet_wrap(. ~ name, scales = "free_y") +
+  geom_line() +
+  geom_point()
+
 
 # Write Data --------------------------------------------------------------
 write_csv(oc_data, "data/oc_data.csv")
@@ -188,8 +207,4 @@ write_csv(oc_city_data, "data/oc_city_data.csv")
 write_csv(oc_city_data, "~/Documents/uci_covid19_dashboard/data/oc_city_data.csv")
 write_csv(oc_zip_month_data, "~/Documents/uci_covid19_dashboard/data/oc_zip_month_data.csv")
 write_csv(oc_city_incid, "data/oc_city_incidence.csv")
-
-
-# Create ECDF -------------------------------------------------------------
-death_delay_ecdf <- ecdf(as.numeric(deaths_tbl$Date.death.posted - deaths_tbl$DtDeath))
 write_rds(death_delay_ecdf, file = "data/death_delay_ecdf.rds")

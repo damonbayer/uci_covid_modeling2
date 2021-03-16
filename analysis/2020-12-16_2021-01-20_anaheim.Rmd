@@ -310,11 +310,12 @@ ggplot(multi_chain_stem_fit$data, aes(end_date, tests)) +
   {
     if ("prop_deaths_reported" %in% colnames(multi_chain_stem_fit$data)) {
     ggplot(multi_chain_stem_fit$data, aes(end_date, prop_deaths_reported)) +
-      geom_line() +
-      geom_point() +
-      scale_y_continuous(name = "Probability Death Reported",
-                         labels = percent,
-                         limits = c(0,1))
+        geom_line() +
+        geom_point() +
+        scale_y_continuous(name = "Probability Death Reported",
+                           labels = percent,
+                           limits = c(0,1)) +
+        scale_x_date(name = "Date", breaks = c("10 day"), date_labels = "%b %d")
     } else NULL } +
   patchwork::plot_layout(ncol = 2, nrow = 2, ) +
   patchwork::plot_annotation(title = str_c(location_name, ", CA data"),
