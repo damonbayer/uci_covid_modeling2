@@ -172,6 +172,15 @@ oc_zip_month_data <- neg_line_list %>%
   arrange(zip)
 
 
+# Refresh maps ------------------------------------------------------------
+source(here("code", "map-functions.R"))
+
+refresh_all_3_map_gifs(
+  neg_line_list_file = negative_line_list_path,
+  line_list_file = line_list_path
+)
+
+
 # OC City Incid -----------------------------------------------------------
 oc_city_incid <-
   metadata_city %>%
