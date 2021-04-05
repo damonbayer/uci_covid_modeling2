@@ -1,0 +1,42 @@
+---
+title: "COVID-19 Maps by UCI Statistics"
+output:
+  workflowr::wflow_html:
+    toc: false
+editor_options:
+  chunk_output_type: console
+---
+<style type="text/css">
+.main-container {
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+}
+</style>
+
+<br>
+<br>
+
+### Number of COVID-19 tests (positive + negative) mapped to OC zip codes
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo = FALSE,
+  fig.align = "center",
+  message = FALSE,
+  warning = FALSE
+)
+
+library(here)
+library(htmltools)
+library(lubridate)
+```
+
+
+```{r present-map-tests}
+htmltools::includeHTML(here::here("docs", "tests-map-gif.html"))
+```
+
+Data provided by the [Orange County Health Care Agency](https://www.ochealthinfo.com).
+
+Last updated `r today()`.
