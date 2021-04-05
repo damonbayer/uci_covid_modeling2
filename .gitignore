@@ -11,3 +11,8 @@ analysis/*_cache
 analysis/site_libs
 
 data/from_OCHCA/
+
+docs/js/
+docs/images
+docs/css
+docs/site_libs
