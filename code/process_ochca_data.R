@@ -2,8 +2,8 @@ library(tidyverse)
 library(lubridate)
 library(here)
 
-line_list_path = "data/from_OCHCA/3.29.21 release to UCI team.csv"
-negative_line_list_path <- "data/from_OCHCA/All PCR tests updated 3.29.21.csv"
+line_list_path = "data/from_OCHCA/4.5.21 release to UCI team.csv"
+negative_line_list_path <- "data/from_OCHCA/All PCR tests updated 4.5.21.csv"
 
 metadata_zip <- tibble(
   zip = c(
@@ -198,7 +198,8 @@ dat %>%
   ggplot(aes(date, value)) +
   facet_wrap(. ~ name, scales = "free_y") +
   geom_line() +
-  geom_point()
+  geom_point() +
+  scale_y_continuous(labels = scales::comma)
 
 
 # Write Data --------------------------------------------------------------
