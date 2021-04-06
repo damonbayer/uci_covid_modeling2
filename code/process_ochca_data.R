@@ -172,12 +172,17 @@ oc_zip_month_data <- neg_line_list %>%
   arrange(zip)
 
 
-# Refresh maps ------------------------------------------------------------
-source(here("code", "map-functions.R"))
+# Refresh map data --------------------------------------------------------
+source(here::here("code", "map-functions.R"))
 
-refresh_all_3_map_gifs(
+prep_and_save_map_data(
   neg_line_list_file = negative_line_list_path,
-  line_list_file = line_list_path
+  line_list_file = line_list_path,
+  zip_code_file = here("data", "map_zipcodes.csv"),
+  cases_per = 100000, # Number of cases per cases_per people in zip per time frame
+  tests_per = 100000, # Number of tests per tests_per people in geog_level per time frame
+  reporting_delay = 5, # Don't use the most recent 5 days in data
+  path_to_save_folder = "~/Documents/uci_covid19_dashboard/data" # Path to folder to save map data in
 )
 
 
