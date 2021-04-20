@@ -231,12 +231,14 @@ Reff_intervals <-
   median_qi(.width = ci_width) %>% 
   ungroup() %>% 
   left_join(prev_models %>% 
-              mutate(time_date_conversion = forecast_obj %>% map("data") %>% map(~select(., time, date = end_date))) %>% 
-              mutate(next_start_date = lead(start_date, default = ymd("9999-12-31"))) %>%
+              mutate(time_date_conversion = forecast_obj %>%
+                       map("data") %>%
+                       map(~select(., time, date = end_date))) %>%
               select(contains("date")) %>% 
               unnest(time_date_conversion)) %>% 
   drop_na() %>% 
-  filter(date < next_start_date) %>% 
+  group_by(date) %>% 
+  filter(end_date == max(end_date)) %>% 
   select(date, Reff, starts_with("."))
 
 Reff_intervals %>% 
@@ -394,3 +396,24 @@ deaths_pp_plot + positivity_pp_plot +
   plot_annotation(title = 'Observed & Predicted Deaths and Positive Test Percent in 3 Day Periods', theme=theme(plot.title = element_text(hjust = 0.2)))
 ```
 
+```{r calcat, echo = FALSE}
+old_data_for_calcat <- read_csv("data/data_for_calcat.csv")
+
+
+if (max(Reff_intervals$date) > max(old_data_for_calcat$date)) {
+  new_data_for_calcat <- 
+  Reff_intervals %>% 
+  filter(.width == 0.95) %>% 
+  select(date, re_mean = Reff, re_CI95l = .lower, re_CI95u = .upper) %>% 
+  right_join(tibble(date = seq(min(Reff_intervals$date), max(Reff_intervals$date), 1))) %>% 
+  pivot_longer(-date) %>% 
+  arrange(name, date) %>%
+  group_by(name) %>% 
+  mutate(value = zoo::na.approx(value, maxgap = 2)) %>% 
+  pivot_wider(names_from = name, values_from = value) %>% 
+  mutate(county = "Orange County", fips = 6059) %>% 
+  select(date, county, fips, re_mean, re_CI95l, re_CI95u)
+  
+  write_csv(new_data_for_calcat, "data/data_for_calcat.csv")
+}
+```
