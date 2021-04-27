@@ -231,12 +231,12 @@ Reff_intervals <-
   median_qi(.width = ci_width) %>% 
   ungroup() %>% 
   left_join(prev_models %>% 
-              mutate(time_date_conversion = forecast_obj %>%
-                       map("data") %>%
-                       map(~select(., time, date = end_date))) %>%
+              mutate(time_date_conversion = forecast_obj %>% map("data") %>% map(~select(., time, date = end_date))) %>% 
+              mutate(next_start_date = lead(start_date, default = ymd("9999-12-31"))) %>%
               select(contains("date")) %>% 
               unnest(time_date_conversion)) %>% 
   drop_na() %>% 
+  filter(date < next_start_date) %>% 
   group_by(date) %>% 
   filter(end_date == max(end_date)) %>% 
   select(date, Reff, starts_with("."))
@@ -268,7 +268,7 @@ future_prevalence_upper_est <- filter(d_i_p_paths, name == "prevalence", date ==
 
 ifr_est <- ifr_R0_samples %>% filter(end_date == max(end_date)) %>% pull(ifr) %>% quantile(c(0.025, 0.975))
 R0_est <- ifr_R0_samples %>% filter(end_date == max(end_date)) %>% pull(R0) %>% quantile(c(0.025, 0.975))
-Reff_est <- Reff_intervals %>% drop_na() %>% filter(date == last_day + 9, .width == 0.95) %>% select(".lower", ".upper") %>% pivot_longer(everything()) %>% deframe()
+Reff_est <- Reff_intervals %>% ungroup() %>% drop_na() %>% filter(date == last_day + 9, .width == 0.95) %>% select(".lower", ".upper") %>% pivot_longer(everything()) %>% deframe()
 ```
 
 

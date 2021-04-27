@@ -77,7 +77,7 @@ rmd_tbl <-
          ext = "Rmd"))
 
 # Write Rmd's
-invisible(map2(rmd_tbl$rmd, rmd_tbl$rmd_path, ~write_lines(x = .x, path = .y)))
+invisible(map2(rmd_tbl$rmd, rmd_tbl$rmd_path, ~write_lines(x = .x, file = .y)))
 
 # YML ---------------------------------------------------------------------
 site_yml_old <- read_lines("analysis/_site.yml")
@@ -102,7 +102,7 @@ archive_menu_new <-
 site_yml <- c(site_yml_old[1:archive_menu_begin], archive_menu_new, site_yml_old[archive_menu_end:length(site_yml_old)])
 
 # Write new site yml
-write_lines(site_yml, path = "analysis/_site.yml")
+write_lines(site_yml, file = "analysis/_site.yml")
 
 # Build Site --------------------------------------------------------------
 rmd_to_build <- c(path("analysis", all_models_for_yml$folder, ext = "Rmd"),
