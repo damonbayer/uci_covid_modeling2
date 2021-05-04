@@ -2,8 +2,8 @@ library(tidyverse)
 library(lubridate)
 library(here)
 
-line_list_path = "data/from_OCHCA/4.26.21 release to UCI team.csv"
-negative_line_list_path <- "data/from_OCHCA/All PCR tests updated 4.26.21.csv"
+line_list_path = "data/from_OCHCA/5.3.21 release to UCI team.csv"
+negative_line_list_path <- "data/from_OCHCA/All PCR tests updated 5.3.21.csv"
 
 metadata_zip <- tibble(
   zip = c(
