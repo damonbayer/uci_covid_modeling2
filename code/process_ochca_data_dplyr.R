@@ -1,8 +1,6 @@
 library(tidyverse)
 library(lubridate)
 library(here)
-library(data.table)
-library(dtplyr)
 
 line_list_path = "data/from_OCHCA/5.10.21 release to UCI team.csv"
 negative_line_list_path <- "data/from_OCHCA/All PCR tests updated 5.10.21.csv"
@@ -41,7 +39,10 @@ metadata_zip <- tibble(
     24.20395869, 40.35900294, 22.54960914, 54.98350495
   )
 ) %>%
-  left_join(as_tibble(fread("data/oc_zips.csv")))
+  left_join(read_csv("data/oc_zips.csv",
+                     col_types = cols(zip = col_integer(),
+                                      population = col_integer()))) %>%
+  mutate(zip = as.character(zip))
 
 metadata_city <- tibble(
   city = c("Aliso Viejo", "Anaheim", "Brea", "Buena Park", "Corona Del Mar",
@@ -59,13 +60,16 @@ metadata_city <- tibble(
   tests = c(55, 333, 29, 75, 11, 126, 34, 18, 10, 71, 117, 162, 213, 296,
             38, 9, 26, 12, 26, 51, 12, 61, 22, 3, 97, 55, 9, 192, 51, 45,
             37, 45, 325, 22, 16, 25, 103, 11, 79, 52)) %>%
-  left_join(fread("data/oc_zips.csv") %>%
+  left_join(read_csv("data/oc_zips.csv") %>%
               group_by(city) %>%
-              summarize(population = sum(population)) %>%
-              as_tibble())
+              summarize(population = sum(population)))
 
-deaths_tbl <-
-  fread(line_list_path, select = c("DtDeath", "Date.death.posted", "DeathDueCOVID", "Zip")) %>%
+deaths_tbl <- read_csv(line_list_path,
+                       col_types = cols(.default = col_skip(),
+                                        `DtDeath` = col_date("%Y-%m-%d"),
+                                        `Date.death.posted` = col_date("%Y-%m-%d"),
+                                        `DeathDueCOVID` = col_character(),
+                                        `Zip` = col_character())) %>%
   filter(DeathDueCOVID == "Y") %>%
   rename(zip = Zip) %>%
   select(-DeathDueCOVID)
@@ -73,7 +77,6 @@ deaths_tbl <-
 deaths_tbl_county <-
   deaths_tbl %>%
   select(-zip) %>%
-  as_tibble() %>%
   pivot_longer(everything()) %>%
   count(name, value) %>%
   pivot_wider(names_from = name, values_from = n) %>%
@@ -84,11 +87,13 @@ deaths_tbl_county <-
          deaths = DtDeath,
          deaths_calcat = Date.death.posted)
 
-
 neg_line_list <-
-  fread(negative_line_list_path,
-        select = c("unique_num", "Specimen.Collected.Date", "TestResult", "Zip"),
-        na.strings = "") %>%
+  read_csv(negative_line_list_path,
+           col_types = cols(.default = col_skip(),
+                            unique_num = col_character(),
+                            Specimen.Collected.Date = col_date("%Y-%m-%d"),
+                            TestResult = col_character(),
+                            Zip = col_character())) %>%
   select(id = unique_num, date = Specimen.Collected.Date, zip = Zip, test_result = TestResult) %>%
   filter(!(is.na(id) | is.na(test_result))) %>%
   mutate(test_result = fct_collapse(str_to_lower(test_result),
@@ -100,73 +105,58 @@ neg_line_list <-
   arrange(date) %>%
   ungroup()
 
-if(length(levels(as.data.table(neg_line_list)$test_result)) != 3) stop(str_c(c("New test result category not accounted for.",levels(neg_line_list$test_result)), collapse = "\n"))
+
+if(length(levels(neg_line_list$test_result)) != 3) stop(str_c(c("New test result category not accounted for.",levels(neg_line_list$test_result)), collapse = "\n"))
 
 
 # Create OC Data ----------------------------------------------------------
-first_pos <-
-  neg_line_list %>%
-  as.data.table() %>%
+first_pos <- neg_line_list %>%
   filter(test_result == "positive") %>%
   group_by(id) %>%
   summarise(first_pos_date = min(date))
 
-neg_line_list_filtered <-
-  left_join(neg_line_list, first_pos) %>%
+neg_line_list_filtered <- left_join(neg_line_list, first_pos) %>%
   mutate(first_pos_date = replace_na(first_pos_date, lubridate::ymd("9999-12-31"))) %>%
   filter(date <= first_pos_date) %>%
   select(-first_pos_date) %>%
   distinct()
 
-oc_data <-
-  neg_line_list_filtered %>%
+oc_data <- neg_line_list_filtered %>%
   count(date, test_result) %>%
   pivot_wider(names_from = test_result, values_from = n, values_fill = 0) %>%
   full_join(deaths_tbl_county) %>%
-  as_tibble() %>%
   replace(is.na(.), 0) %>%
   mutate(cases = positive, tests = negative + positive + other) %>%
-  select(date, cases, tests, deaths, deaths_calcat) %>%
-  mutate(date = as_date(date))
+  select(date, cases, tests, deaths, deaths_calcat)
 
 # Create OC City Data -----------------------------------------------------
-deaths_tbl_city <-
-  deaths_tbl %>%
+deaths_tbl_city <- deaths_tbl %>%
   select(zip, date = DtDeath) %>%
   count(date, zip, name = "deaths") %>%
   arrange(date) %>%
-  as_tibble() %>%
   left_join(select(metadata_zip, zip, city)) %>%
   count(date, city, wt = deaths, name = "deaths") %>%
   drop_na()
 
-neg_line_list_filtered_city <-
-  neg_line_list_filtered %>%
-  left_join(metadata_zip %>%
-              mutate(zip = as.character(zip)) %>%
-              select(zip, city)) %>%
-  as_tibble() %>%
+neg_line_list_filtered_city <- neg_line_list_filtered %>%
+  left_join(select(metadata_zip, zip, city)) %>%
   drop_na() %>%
   count(date, test_result, city) %>%
   pivot_wider(names_from = test_result, values_from = n) %>%
   replace(is.na(.), 0)
 
-oc_city_data <-
-  full_join(neg_line_list_filtered_city, deaths_tbl_city) %>%
+oc_city_data <- full_join(neg_line_list_filtered_city, deaths_tbl_city) %>%
   replace(is.na(.), 0) %>%
   mutate(cases = positive, tests = negative + positive + other) %>%
   select(date, city, cases, tests, deaths) %>%
-  arrange(city, date) %>%
-  mutate(date = as_date(date))
+  arrange(city, date)
 
 
 # Create OC Zip Month Data ------------------------------------------------
-oc_zip_month_data <-
-  neg_line_list %>%
+oc_zip_month_data <- neg_line_list %>%
   mutate(zip = str_sub(zip, end = 5)) %>%
   filter(zip %in% metadata_zip$zip) %>%
   filter(date >= lubridate::ymd("2020-03-01")) %>%
-  as_tibble() %>%
   drop_na() %>%
   mutate(year = lubridate::year(date),
          month = format.Date(date, "%m")) %>%
@@ -177,7 +167,7 @@ oc_zip_month_data <-
   select(zip, year, month, cases, tests) %>%
   pivot_longer(-c(zip, year, month)) %>%
   pivot_wider(names_from = c(name, year, month), values_from = value) %>%
-  right_join(metadata_zip %>% mutate(zip = as.character(zip))) %>%
+  right_join(metadata_zip) %>%
   select(zip, city, population, SeptIncid, starts_with("tests"), starts_with("cases")) %>%
   arrange(zip)
 
@@ -206,9 +196,7 @@ oc_city_incid <-
   select(-pop_incid)
 
 # Create ECDF -------------------------------------------------------------
-deaths_tbl <- as_tibble(deaths_tbl)
 death_delay_ecdf <- ecdf(as.numeric(deaths_tbl$Date.death.posted - deaths_tbl$DtDeath))
-
 
 # Plot Data ---------------------------------------------------------------
 source('code/helper_functions.R')
