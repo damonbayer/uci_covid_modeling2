@@ -18,14 +18,14 @@ navbar:
   - text: Archived Reports
     icon: fas fa-archive
     menu:
+      - text: "Apr 21 - May 26"
+        href: 2021-04-21_2021-05-26.html
       - text: "Apr 14 - May 19"
         href: 2021-04-14_2021-05-19.html
       - text: "Apr  7 - May 12"
         href: 2021-04-07_2021-05-12.html
       - text: "Mar 31 - May  5"
         href: 2021-03-31_2021-05-05.html
-      - text: "Mar 24 - Apr 28"
-        href: 2021-03-24_2021-04-28.html
   - text: About
     icon: fas fa-users
     href: about.html
