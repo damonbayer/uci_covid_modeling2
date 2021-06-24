@@ -4,7 +4,7 @@ library(here)
 library(data.table)
 library(dtplyr)
 
-line_list_path = "data/from_OCHCA/5.31.21 release to UCI team.csv"
+line_list_path <- "data/from_OCHCA/5.31.21 release to UCI team.csv"
 negative_line_list_path <- "data/from_OCHCA/All PCR tests updated 5.31.21.csv"
 
 metadata_zip <- tibble(
