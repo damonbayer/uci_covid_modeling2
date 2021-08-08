@@ -117,7 +117,7 @@ prep_and_save_map_data <- function(
         "240-480",
         ">480"
       ))) %>%
-    select(zip, plot_var, month_date)
+    select(zip, plot_var, month_date, new_cases_scaled)
 
   cases_legend_label <- paste0(
     "Reported cases per\n",
@@ -152,7 +152,7 @@ prep_and_save_map_data <- function(
         ">2400"
       )
     )) %>%
-    select(zip, plot_var, month_date)
+    select(zip, plot_var, month_date, new_tests_scaled)
 
   tests_legend_label <- paste0(
     "Tests per\n",
@@ -184,7 +184,7 @@ prep_and_save_map_data <- function(
         ">30"
       )
     )) %>%
-    select(zip, plot_var, month_date)
+    select(zip, plot_var, month_date, per_pos)
 
   pos_legend_label <- paste0("Percent of COVID-19\ntest positive")
 
