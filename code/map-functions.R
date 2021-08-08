@@ -475,7 +475,7 @@ gen_map_gif <- function(
         ) +
         scale_fill_viridis(
           direction = -1,
-          limits = c(0, round(max(plot_var_cont), -1))
+          limits = c(0, round(max(plot_data$plot_var_cont), -1))
         )
 
       grid.arrange(
