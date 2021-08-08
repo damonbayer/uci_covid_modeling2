@@ -86,7 +86,7 @@ prep_and_save_map_data <- function(
     mutate(new_cases = positive, new_tests = negative + positive + other) %>%
     select(posted_date, zip, new_cases, new_tests, new_deaths) %>%
     arrange(zip, posted_date) %>%
-    mutate(month_date = as.yearmon(posted_date, "%m/%Y")) %>%
+    mutate(month_date = zoo::as.yearmon(posted_date, "%m/%Y")) %>%
     filter(posted_date < max(posted_date) - days(reporting_delay))
 
 
@@ -98,6 +98,7 @@ prep_and_save_map_data <- function(
     summarize(new_cases_in_frame = sum(new_cases)) %>%
     inner_join(oc_zips, by = "zip") %>%
     mutate(new_cases_scaled = new_cases_in_frame / cases_scaled_pop) %>%
+    mutate(plot_var_cont = new_cases_scaled) %>%
     mutate(plot_var_dis = factor(
       case_when(
         new_cases_scaled <= 5 ~ "0-5",
@@ -117,8 +118,7 @@ prep_and_save_map_data <- function(
         "240-480",
         ">480"
       ))) %>%
-    select(zip, plot_var_dis, month_date) %>%
-    mutate(plot_var_cont = new_cases_scaled)
+    select(zip, plot_var_dis, month_date, plot_var_cont)
 
   cases_legend_label <- paste0(
     "Reported cases per\n",
@@ -135,6 +135,7 @@ prep_and_save_map_data <- function(
     summarize(new_tests_in_frame = sum(new_tests)) %>%
     inner_join(oc_zips, by = "zip") %>%
     mutate(new_tests_scaled = new_tests_in_frame / tests_scaled_pop) %>%
+    mutate(plot_var_cont = new_tests_scaled) %>%
     mutate(plot_var_dis = factor(
       case_when(
         new_tests_scaled <= 100 ~ "0-100",
@@ -153,8 +154,7 @@ prep_and_save_map_data <- function(
         ">2400"
       )
     )) %>%
-    select(zip, plot_var_dis, month_date) %>%
-    mutate(plot_var_cont = new_tests_scaled)
+    select(zip, plot_var_dis, month_date, plot_var_cont)
 
   tests_legend_label <- paste0(
     "Tests per\n",
@@ -167,6 +167,7 @@ prep_and_save_map_data <- function(
   pos_plot_data <- covid_zip_data %>%
     group_by(zip, month_date) %>%
     summarize(per_pos = 100 * sum(new_cases) / sum(new_tests)) %>%
+    mutate(plot_var_cont = per_pos) %>%
     inner_join(oc_zips, by = "zip") %>%
     mutate(plot_var_dis = factor(
       case_when(
@@ -186,8 +187,7 @@ prep_and_save_map_data <- function(
         ">30"
       )
     )) %>%
-    select(zip, plot_var_dis, month_date) %>%
-    mutate(plot_var_cont = per_pos)
+    select(zip, plot_var_dis, month_date, plot_var_cont)
 
   pos_legend_label <- paste0("Percent of COVID-19\ntest positive")
 
@@ -475,7 +475,7 @@ gen_map_gif <- function(
         ) +
         scale_fill_viridis(
           direction = -1,
-          limits = c(0, round(max(plot_var_cont), -2))
+          limits = c(0, round(max(plot_var_cont), -1))
         )
 
       grid.arrange(
@@ -496,14 +496,3 @@ gen_map_gif <- function(
 
   setwd(prev_directory)
 }
-
-
-
-
-
-
-
-
-
-
-
