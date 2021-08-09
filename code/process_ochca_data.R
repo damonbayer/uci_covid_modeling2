@@ -4,8 +4,8 @@ library(here)
 library(data.table)
 library(dtplyr)
 
-line_list_path <- "data/from_OCHCA/8.2.21 release to UCI team.csv"
-negative_line_list_path <- "data/from_OCHCA/All PCR tests updated 8.2.21.csv"
+line_list_path <- "data/from_OCHCA/5.31.21 release to UCI team.csv"
+negative_line_list_path <- "data/from_OCHCA/All PCR tests updated 5.31.21.csv"
 
 metadata_zip <- tibble(
   zip = c(
@@ -192,7 +192,7 @@ prep_and_save_map_data(
   cases_per = 100000, # Number of cases per cases_per people in zip per time frame
   tests_per = 100000, # Number of tests per tests_per people in geog_level per time frame
   reporting_delay = 5, # Don't use the most recent 5 days in data
-  path_to_save_folder = "~/research/uci_covid19_dashboard/data" # Path to folder to save map data in
+  path_to_save_folder = "~/Documents/uci_covid19_dashboard/data" # Path to folder to save map data in
 )
 
 
