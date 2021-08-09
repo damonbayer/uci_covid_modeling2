@@ -231,7 +231,7 @@ dat %>%
 # Write Data --------------------------------------------------------------
 write_csv(oc_data, "data/oc_data.csv")
 write_csv(oc_city_data, "data/oc_city_data.csv")
-write_csv(oc_city_data, "~/research/uci_covid19_dashboard/data/oc_city_data.csv")
-write_csv(oc_zip_month_data, "~/research/uci_covid19_dashboard/data/oc_zip_month_data.csv")
+write_csv(oc_city_data, "~/Documents/uci_covid19_dashboard/data/oc_city_data.csv")
+write_csv(oc_zip_month_data, "~/Documents/uci_covid19_dashboard/data/oc_zip_month_data.csv")
 write_csv(oc_city_incid, "data/oc_city_incidence.csv")
 write_rds(death_delay_ecdf, file = "data/death_delay_ecdf.rds")
