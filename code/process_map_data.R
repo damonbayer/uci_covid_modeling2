@@ -12,8 +12,7 @@ prep_and_save_map_data <- function(
   path_to_save_folder = "map-covid-data" # Path to folder to save map data in
 ){
 
-  oc_zips <- read_csv(zip_code_file, col_types = cols(Zip = col_character())) %>%
-    rename_all(str_to_lower)
+  oc_zips <- read_csv(zip_code_file, col_types = cols(zip = col_character()))
 
 
   # Read in and summarize OCHCA data by zip
@@ -36,7 +35,7 @@ prep_and_save_map_data <- function(
     ))) %>%
     filter(!is.na(test_result)) %>%
     mutate(zip = str_sub(zip, end = 5)) %>%
-    filter(posted_date >= ymd("2020-01-01")) %>%
+    filter(posted_date >= ymd("2020-03-01")) %>%
     drop_na() %>%
     group_by(id) %>%
     arrange(posted_date) %>%
@@ -113,7 +112,7 @@ prep_and_save_map_data <- function(
         "240-480",
         ">480"
       ))) %>%
-    select(zip, plot_var_dis, month_date, plot_var_cont)
+    select(zip, month_date, population, new_cases_in_frame, plot_var_dis, plot_var_cont)
 
   cases_legend_label <- paste0(
     "Reported cases per\n",
@@ -149,7 +148,7 @@ prep_and_save_map_data <- function(
         ">2400"
       )
     )) %>%
-    select(zip, plot_var_dis, month_date, plot_var_cont)
+    select(zip, month_date, population, new_tests_in_frame, plot_var_dis, plot_var_cont)
 
   tests_legend_label <- paste0(
     "Tests per\n",
@@ -182,7 +181,7 @@ prep_and_save_map_data <- function(
         ">30"
       )
     )) %>%
-    select(zip, plot_var_dis, month_date, plot_var_cont)
+    select(zip, month_date, population, per_pos, plot_var_dis, plot_var_cont)
 
   pos_legend_label <- paste0("Percent of COVID-19\ntest positive")
 
