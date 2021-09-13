@@ -12,8 +12,7 @@ prep_and_save_map_data <- function(
   path_to_save_folder = "map-covid-data" # Path to folder to save map data in
 ){
 
-  oc_zips <- read_csv(zip_code_file, col_types = cols(Zip = col_character())) %>%
-    rename_all(str_to_lower)
+  oc_zips <- read_csv(zip_code_file, col_types = cols(zip = col_character()))
 
 
   # Read in and summarize OCHCA data by zip
