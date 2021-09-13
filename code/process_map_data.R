@@ -35,7 +35,7 @@ prep_and_save_map_data <- function(
     ))) %>%
     filter(!is.na(test_result)) %>%
     mutate(zip = str_sub(zip, end = 5)) %>%
-    filter(posted_date >= ymd("2020-01-01")) %>%
+    filter(posted_date >= ymd("2020-03-01")) %>%
     drop_na() %>%
     group_by(id) %>%
     arrange(posted_date) %>%
